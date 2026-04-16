@@ -6,7 +6,7 @@ import { ProductCard } from '@/components/product-card';
 import { BirthdayBuddyBanner } from '@/components/birthday-buddy-banner';
 
 export default function HomePage() {
-  const featuredProducts = products.slice(0, 6);
+  const featuredProducts = products.slice(0, 7);
 
   return (
     <div className="flex flex-col">
@@ -140,47 +140,169 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CATEGORIES ── */}
-      <section className="py-16 bg-muted/30">
+      {/* ── BROWSE BY CATEGORIES ── */}
+      <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-center mb-12">Browse by Category</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
-              { name: 'Candles', icon: '🕯️', desc: 'Scented & decorative', href: '/products?category=Candles' },
-              { name: 'Cards', icon: '💌', desc: 'Handmade with love', href: '/products?category=Cards' },
-              { name: 'Hampers', icon: '🎁', desc: 'Curated gift sets', href: '/products?category=Hampers' },
-            ].map((category) => (
-              <Link
-                key={category.name}
-                href={category.href}
-                className="group relative overflow-hidden rounded-2xl bg-white p-8 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="text-5xl mb-4">{category.icon}</div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">{category.name}</h3>
-                <p className="text-muted-foreground">{category.desc}</p>
-                <div className="mt-4 flex items-center gap-1 text-primary font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                  Explore <ArrowRight className="h-4 w-4" />
+
+          {/* Section header */}
+          <div className="flex items-center justify-between mb-7">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Browse by categories</h2>
+
+            {/* Filter pills */}
+            <div className="flex items-center gap-2">
+              {[
+                { label: 'ALL', href: '/products' },
+                { label: 'CANDLES', href: '/products?category=Candles' },
+                { label: 'CARDS', href: '/products?category=Cards' },
+                { label: 'HAMPERS', href: '/products?category=Hampers' },
+              ].map((pill, i) => (
+                <Link
+                  key={pill.label}
+                  href={pill.href}
+                  className={
+                    i === 0
+                      ? 'rounded-full px-4 py-1.5 text-xs font-semibold bg-foreground text-white transition-colors hover:bg-foreground/80'
+                      : 'rounded-full px-4 py-1.5 text-xs font-semibold border border-border text-foreground hover:bg-muted transition-colors'
+                  }
+                >
+                  {pill.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Category cards — horizontal row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+            {/* Card 1 — Candles (real photo) */}
+            <Link
+              href="/products?category=Candles"
+              className="group relative overflow-hidden rounded-2xl bg-muted"
+              style={{ height: '220px' }}
+            >
+              <Image
+                src="/promo-candles.png"
+                alt="Candles"
+                fill
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+                CANDLES
+              </span>
+            </Link>
+
+            {/* Card 2 — Cards (gradient placeholder) */}
+            <Link
+              href="/products?category=Cards"
+              className="group relative overflow-hidden rounded-2xl"
+              style={{ height: '220px', background: 'linear-gradient(135deg, #fdf6f0 0%, #fde8d8 100%)' }}
+            >
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center space-y-2 group-hover:scale-110 transition-transform duration-500">
+                  <div className="text-7xl">💌</div>
+                  <div className="flex gap-1 justify-center">
+                    {['🌸','⭐','💛'].map((e, i) => (
+                      <span key={i} className="text-2xl opacity-60">{e}</span>
+                    ))}
+                  </div>
                 </div>
-              </Link>
-            ))}
+              </div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+                CARDS
+              </span>
+            </Link>
+
+            {/* Card 3 — Hampers (real photo) */}
+            <Link
+              href="/products?category=Hampers"
+              className="group relative overflow-hidden rounded-2xl bg-muted"
+              style={{ height: '220px' }}
+            >
+              <Image
+                src="/promo-hamper.png"
+                alt="Hampers"
+                fill
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+                HAMPERS
+              </span>
+            </Link>
+
+            {/* Card 4 — All Gifts (gradient placeholder) */}
+            <Link
+              href="/products"
+              className="group relative overflow-hidden rounded-2xl"
+              style={{ height: '220px', background: 'linear-gradient(135deg, #fce8f0 0%, #fff0f9 100%)' }}
+            >
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center space-y-2 group-hover:scale-110 transition-transform duration-500">
+                  <div className="text-7xl">🎁</div>
+                  <div className="flex gap-1 justify-center">
+                    {['✨','🎀','🎉'].map((e, i) => (
+                      <span key={i} className="text-2xl opacity-60">{e}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+              <span className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+                ALL GIFTS
+              </span>
+            </Link>
+
           </div>
         </div>
       </section>
 
       {/* ── FEATURED PRODUCTS ── */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold">Featured Products</h2>
-            <Link href="/products" className="flex items-center gap-1 text-primary font-medium hover:underline">
-              View all <ArrowRight className="h-4 w-4" />
-            </Link>
+
+          {/* Header row */}
+          <div className="flex items-center justify-between mb-7">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Popular products</h2>
+            <div className="flex items-center gap-2">
+              {[
+                { label: 'ALL', href: '/products' },
+                { label: 'CANDLES', href: '/products?category=Candles' },
+                { label: 'CARDS', href: '/products?category=Cards' },
+                { label: 'HAMPERS', href: '/products?category=Hampers' },
+              ].map((pill, i) => (
+                <Link
+                  key={pill.label}
+                  href={pill.href}
+                  className={
+                    i === 0
+                      ? 'rounded-full px-4 py-1.5 text-xs font-semibold bg-foreground text-white hover:bg-foreground/80 transition-colors'
+                      : 'rounded-full px-4 py-1.5 text-xs font-semibold border border-border text-foreground hover:bg-muted transition-colors hidden sm:block'
+                  }
+                >
+                  {pill.label}
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProducts.map((product) => (
+
+          {/* Row 1: 4-col grid — col 1 (span-1) | col 2 (span-2, taller) | col 3 (span-1) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+            <ProductCard product={featuredProducts[0]} />
+            <ProductCard product={featuredProducts[1]} tall className="sm:col-span-2" />
+            <ProductCard product={featuredProducts[2]} />
+          </div>
+
+          {/* Row 2: 4 equal columns */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {featuredProducts.slice(3, 7).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+
         </div>
       </section>
 
