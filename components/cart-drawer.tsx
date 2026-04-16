@@ -83,14 +83,24 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     className="flex gap-4 rounded-xl bg-muted/50 p-3"
                   >
                     {/* Image */}
-                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-white">
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
-                        <span className="text-2xl">
-                          {item.product.category === 'Candles' && '🕯️'}
-                          {item.product.category === 'Cards' && '💌'}
-                          {item.product.category === 'Hampers' && '🎁'}
-                        </span>
-                      </div>
+                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
+                      {item.product.image ? (
+                        <Image
+                          src={item.product.image}
+                          alt={item.product.name}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-primary/5 to-accent/5">
+                          <span className="text-2xl">
+                            {item.product.category === 'Candles' && '🕯️'}
+                            {item.product.category === 'Cards' && '💌'}
+                            {item.product.category === 'Hampers' && '🎁'}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Details */}

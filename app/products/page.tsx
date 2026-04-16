@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useMemo, Suspense, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { products, Product } from '@/lib/data';
 import { ProductCard } from '@/components/product-card';
@@ -14,6 +14,7 @@ type PriceRange = 'all' | 'under-25' | '25-50' | '50-100' | 'over-100';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const initialCategory = searchParams.get('category') as CategoryFilter | null;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,6 +22,12 @@ function ProductsContent() {
   const [priceRange, setPriceRange] = useState<PriceRange>('all');
   const [sortBy, setSortBy] = useState<SortOption>('featured');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Sync with URL query param
+  useEffect(() => {
+    const query = searchParams.get('q') || '';
+    setSearchQuery(query);
+  }, [searchParams]);
 
   const filteredProducts = useMemo(() => {
     let result = [...products];
@@ -79,13 +86,15 @@ function ProductsContent() {
   }, [selectedCategory, priceRange, searchQuery, sortBy]);
 
   const hasActiveFilters =
-    selectedCategory !== 'All' || priceRange !== 'all' || searchQuery;
+    selectedCategory !== 'All' || priceRange !== 'all' || searchQuery.trim();
 
   const clearFilters = () => {
     setSelectedCategory('All');
     setPriceRange('all');
     setSearchQuery('');
     setSortBy('featured');
+    // Clear URL params via router
+    router.push('/products');
   };
 
   return (
@@ -102,9 +111,29 @@ function ProductsContent() {
                 type="text"
                 placeholder="Search gifts..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-input bg-white pl-10 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSearchQuery(val);
+                  // Update URL when typing
+                  if (val.trim()) {
+                    router.push(`/products?q=${encodeURIComponent(val.trim())}`);
+                  } else {
+                    router.push('/products');
+                  }
+                }}
+                className="w-full rounded-full border border-input bg-white pl-10 pr-10 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    router.push('/products');
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted text-muted-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
             {/* Mobile Filter Toggle */}
             <button

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
   ShoppingCart,
   Menu,
@@ -48,6 +48,13 @@ export function Header({ onCartClick }: HeaderProps) {
   const totalItems = useCartStore((state) => state.getTotalItems());
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Sync header search with URL query param
+  useEffect(() => {
+    const query = searchParams.get('q') || '';
+    setSearchVal(query);
+  }, [searchParams]);
 
   const catRef = useRef<HTMLDivElement>(null);
   const newRef = useRef<HTMLDivElement>(null);
@@ -65,7 +72,17 @@ export function Header({ onCartClick }: HeaderProps) {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (searchVal.trim()) {
-      router.push(`/products?q=GH₵{encodeURIComponent(searchVal.trim())}`);
+      router.push(`/products?q=${encodeURIComponent(searchVal.trim())}`);
+    } else {
+      // Clear search - go to products without query
+      router.push('/products');
+    }
+  }
+
+  function clearSearch() {
+    setSearchVal('');
+    if (pathname === '/products') {
+      router.push('/products');
     }
   }
 
@@ -209,6 +226,15 @@ export function Header({ onCartClick }: HeaderProps) {
                 placeholder="Search gifts..."
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
               />
+              {searchVal && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="p-0.5 rounded-full hover:bg-muted-foreground/20 text-muted-foreground"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </form>
 
             {/* Divider */}

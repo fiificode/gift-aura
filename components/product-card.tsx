@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { Product } from '@/lib/data';
@@ -27,8 +28,9 @@ export function ProductCard({ product, className, tall }: ProductCardProps) {
   return (
     <div className={cn('group flex flex-col', className)}>
       {/* Image area */}
-      <div
-        className="relative overflow-hidden rounded-2xl"
+      <Link
+        href={`/products/${product.id}`}
+        className="relative overflow-hidden rounded-2xl block"
         style={{
           height: tall ? '320px' : '220px',
           background: categoryGradient[product.category] ?? '#f5f5f5',
@@ -61,24 +63,27 @@ export function ProductCard({ product, className, tall }: ProductCardProps) {
 
         {/* Add to cart — appears on hover, bottom */}
         <button
-          onClick={() => addItem(product)}
-          className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 bg-foreground/90 text-white text-xs font-semibold py-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
-          aria-label={`Add GH₵{product.name} to cart`}
+          onClick={(e) => {
+            e.preventDefault();
+            addItem(product);
+          }}
+          className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 bg-foreground/90 text-white text-xs font-semibold py-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20"
+          aria-label={`Add ${product.name} to cart`}
         >
           <ShoppingCart className="h-3.5 w-3.5" />
           Add to Cart
         </button>
-      </div>
+      </Link>
 
       {/* Text below — outside the image */}
-      <div className="mt-2.5 px-0.5">
-        <h3 className="font-semibold text-foreground text-sm leading-snug line-clamp-1">
+      <Link href={`/products/${product.id}`} className="mt-2.5 px-0.5 block">
+        <h3 className="font-semibold text-foreground text-sm leading-snug line-clamp-1 hover:text-primary transition-colors">
           {product.name}
         </h3>
         <p className="mt-0.5 text-sm font-medium text-muted-foreground">
           GH₵{product.price}
         </p>
-      </div>
+      </Link>
     </div>
   );
 }
