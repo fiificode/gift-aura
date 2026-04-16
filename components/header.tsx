@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { UserButton, SignInButton, useUser } from '@clerk/nextjs';
 import {
   ShoppingCart,
   Menu,
@@ -11,6 +12,7 @@ import {
   ChevronDown,
   HelpCircle,
   Headphones,
+  User,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useCartStore } from '@/stores/cart-store';
@@ -49,6 +51,7 @@ export function Header({ onCartClick }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { isSignedIn } = useUser();
 
   // Sync header search with URL query param
   useEffect(() => {
@@ -148,6 +151,23 @@ export function Header({ onCartClick }: HeaderProps) {
                 </span>
               )}
             </button>
+
+            {/* User Auth */}
+            {isSignedIn ? (
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "h-9 w-9",
+                  },
+                }}
+              />
+            ) : (
+              <SignInButton mode="modal">
+                <button className="flex items-center justify-center h-9 w-9 rounded-full bg-muted hover:bg-muted/80 transition-colors">
+                  <User className="h-4 w-4 text-foreground" />
+                </button>
+              </SignInButton>
+            )}
           </div>
         </div>
       </div>

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Gift, Users, Copy, Check, X, Sparkles } from 'lucide-react';
-import { useReferralStore } from '@/stores/referral-store';
+import { useState, useEffect } from 'react';
+import { useUser, useClerk } from '@clerk/nextjs';
+import { Gift, Users, Copy, Check, X, Sparkles, Loader2 } from 'lucide-react';
+import { referralService, type ReferralStats, type RewardType } from '@/lib/referral-service';
 import { cn } from '@/lib/utils';
 
 interface BirthdayBuddyBannerProps {
@@ -13,18 +14,73 @@ interface BirthdayBuddyBannerProps {
 export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayBuddyBannerProps) {
   const [showModal, setShowModal] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  const referralCount = useReferralStore((state) => state.referralCount);
-  const badge = useReferralStore((state) => state.badge);
-  const rewardUnlocked = useReferralStore((state) => state.rewardUnlocked);
-  const rewardClaimed = useReferralStore((state) => state.rewardClaimed);
-  const addReferral = useReferralStore((state) => state.addReferral);
-  const claimReward = useReferralStore((state) => state.claimReward);
-  const progress = useReferralStore((state) => state.getProgress());
-  const badgeTitle = useReferralStore((state) => state.getBadgeTitle());
-
-  const referralLink = 'https://giftaura.com/ref/your-friend-code';
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<ReferralStats>({
+    totalReferrals: 0,
+    completedReferrals: 0,
+    pendingReferrals: 0,
+    canClaimReward: false,
+    hasClaimedReward: false,
+    badge: 'starter',
+    progress: 0,
+    rewardType: null,
+    referralCode: null,
+  });
+  const [referralLink, setReferralLink] = useState('');
+  const { isSignedIn, user } = useUser();
+  const { openSignIn } = useClerk();
   const REFERRAL_THRESHOLD = 5;
+
+  // Load referral stats when user is available
+  useEffect(() => {
+    loadStats();
+  }, [user]);
+
+  async function loadStats() {
+    try {
+      setLoading(true);
+      
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
+      
+      const email = user.primaryEmailAddress?.emailAddress;
+      
+      // Ensure profile exists
+      let profile = await referralService.getProfile(user.id);
+      if (!profile) {
+        profile = await referralService.createProfile(user.id, email);
+      }
+      
+      // Get referral stats
+      const referralStats = await referralService.getReferralStats(user.id);
+      setStats(referralStats);
+      
+      // Generate referral link
+      let code = referralStats.referralCode;
+      if (!code && user?.id) {
+        // Generate a fallback code if none exists
+        code = `buddy${user.id.slice(0, 8)}`;
+      }
+      if (code) {
+        const link = referralService.generateReferralLink(code);
+        setReferralLink(link);
+      }
+    } catch (error) {
+      console.error('Error loading referral stats:', error);
+      // Generate fallback referral link even on error
+      if (user?.id && !referralLink) {
+        const fallbackCode = `buddy${user.id.slice(0, 8)}`;
+        const link = referralService.generateReferralLink(fallbackCode);
+        setReferralLink(link);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const badgeTitle = referralService.getBadgeTitle(stats.badge);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink);
@@ -32,8 +88,49 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSimulateReferral = () => {
-    addReferral();
+  const handleSimulateReferral = async () => {
+    if (!user?.id) return;
+    
+    try {
+      setLoading(true);
+      // Simulate adding a referral with a demo email
+      const demoEmail = `demo-${Date.now()}@example.com`;
+      await referralService.addReferral(user.id, demoEmail);
+      
+      // Reload stats
+      await loadStats();
+    } catch (error) {
+      console.error('Error adding referral:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClaimReward = async (reward: RewardType) => {
+    if (!user?.id) return;
+    
+    try {
+      setLoading(true);
+      await referralService.claimReward(user.id, reward);
+      await loadStats();
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error claiming reward:', error);
+      alert(error instanceof Error ? error.message : 'Failed to claim reward');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Show sign in prompt if not authenticated
+  const handleOpenModal = () => {
+    if (!isSignedIn) {
+      openSignIn({ redirectUrl: window.location.pathname });
+      return;
+    }
+    setShowModal(true);
+    // Load stats when modal opens
+    loadStats();
   };
 
   if (variant === 'compact') {
@@ -49,23 +146,29 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
             <Gift className="h-5 w-5 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">{badgeTitle}</p>
-            <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-linear-to-r from-primary to-accent transition-all duration-500"
-                style={{ width: `GH₵{progress}%` }}
-              />
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {referralCount}/{REFERRAL_THRESHOLD} referrals
-              {rewardUnlocked && !rewardClaimed && (
-                <span className="ml-1 text-primary font-medium">- Reward unlocked! 🎉</span>
-              )}
-            </p>
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            ) : (
+              <>
+                <p className="text-sm font-medium text-foreground">{badgeTitle}</p>
+                <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-linear-to-r from-primary to-accent transition-all duration-500"
+                    style={{ width: `${stats.progress}%` }}
+                  />
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {stats.completedReferrals}/{REFERRAL_THRESHOLD} referrals
+                  {stats.canClaimReward && (
+                    <span className="ml-1 text-primary font-medium">- Reward unlocked! 🎉</span>
+                  )}
+                </p>
+              </>
+            )}
           </div>
-          {!rewardUnlocked && (
+          {!stats.canClaimReward && !stats.hasClaimedReward && (
             <button
-              onClick={() => setShowModal(true)}
+              onClick={handleOpenModal}
               className="text-xs font-medium text-primary hover:underline"
             >
               Invite
@@ -115,30 +218,36 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
 
               {/* Progress */}
               <div className="w-full sm:w-48">
-                <div className="flex items-center justify-between text-xs mb-1 opacity-90">
-                  <span>Progress</span>
-                  <span>
-                    {referralCount}/{REFERRAL_THRESHOLD} referrals
-                  </span>
-                </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/30">
-                  <div
-                    className="h-full rounded-full bg-white transition-all duration-500"
-                    style={{ width: `GH₵{progress}%` }}
-                  />
-                </div>
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between text-xs mb-1 opacity-90">
+                      <span>Progress</span>
+                      <span>
+                        {stats.completedReferrals}/{REFERRAL_THRESHOLD} referrals
+                      </span>
+                    </div>
+                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/30">
+                      <div
+                        className="h-full rounded-full bg-white transition-all duration-500"
+                        style={{ width: `${stats.progress}%` }}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
 
-              {rewardUnlocked && !rewardClaimed ? (
+              {stats.canClaimReward ? (
                 <button
-                  onClick={() => setShowModal(true)}
+                  onClick={handleOpenModal}
                   className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-primary hover:bg-white/90 transition-colors"
                 >
                   Claim Your Reward! 🎁
                 </button>
               ) : (
                 <button
-                  onClick={() => setShowModal(true)}
+                  onClick={handleOpenModal}
                   className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium hover:bg-white/30 transition-colors backdrop-blur-sm"
                 >
                   Invite Friends
@@ -170,7 +279,7 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
               <X className="h-4 w-4" />
             </button>
 
-            {rewardUnlocked && !rewardClaimed ? (
+            {stats.canClaimReward ? (
               <div className="space-y-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mx-auto">
                   <Gift className="h-8 w-8 text-primary" />
@@ -184,11 +293,9 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
 
                 <div className="grid gap-3">
                   <button
-                    onClick={() => {
-                      claimReward('hamper');
-                      setShowModal(false);
-                    }}
-                    className="flex items-center gap-3 rounded-xl border-2 border-primary/20 p-4 hover:border-primary transition-colors"
+                    onClick={() => handleClaimReward('surprise_hamper')}
+                    disabled={loading}
+                    className="flex items-center gap-3 rounded-xl border-2 border-primary/20 p-4 hover:border-primary transition-colors disabled:opacity-50"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                       🎁
@@ -200,11 +307,9 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
                   </button>
 
                   <button
-                    onClick={() => {
-                      claimReward('discount');
-                      setShowModal(false);
-                    }}
-                    className="flex items-center gap-3 rounded-xl border-2 border-primary/20 p-4 hover:border-primary transition-colors"
+                    onClick={() => handleClaimReward('discount_10')}
+                    disabled={loading}
+                    className="flex items-center gap-3 rounded-xl border-2 border-primary/20 p-4 hover:border-primary transition-colors disabled:opacity-50"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10">
                       💰
@@ -216,11 +321,9 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
                   </button>
 
                   <button
-                    onClick={() => {
-                      claimReward('gift');
-                      setShowModal(false);
-                    }}
-                    className="flex items-center gap-3 rounded-xl border-2 border-primary/20 p-4 hover:border-primary transition-colors"
+                    onClick={() => handleClaimReward('free_gift')}
+                    disabled={loading}
+                    className="flex items-center gap-3 rounded-xl border-2 border-primary/20 p-4 hover:border-primary transition-colors disabled:opacity-50"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold/10">
                       🕯️
@@ -232,7 +335,7 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
                   </button>
                 </div>
               </div>
-            ) : rewardClaimed ? (
+            ) : stats.hasClaimedReward ? (
               <div className="space-y-4 text-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold/20 mx-auto">
                   <Sparkles className="h-8 w-8 text-gold" />
@@ -254,24 +357,31 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
                   Share your unique referral link and earn rewards!
                 </p>
 
-                <div className="flex items-center gap-2 rounded-xl border border-border bg-muted p-3">
-                  <input
-                    type="text"
-                    value={referralLink}
-                    readOnly
-                    className="flex-1 bg-transparent text-sm text-foreground outline-none"
-                  />
-                  <button
-                    onClick={handleCopy}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white hover:opacity-90 transition-opacity"
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
+                {loading || !referralLink ? (
+                  <div className="flex items-center justify-center gap-2 rounded-xl border border-border bg-muted p-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">Generating your referral link...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 rounded-xl border border-border bg-muted p-3">
+                    <input
+                      type="text"
+                      value={referralLink}
+                      readOnly
+                      className="flex-1 bg-transparent text-sm text-foreground outline-none"
+                    />
+                    <button
+                      onClick={handleCopy}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white hover:opacity-90 transition-opacity"
+                    >
+                      {copied ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                )}
 
                 {copied && (
                   <p className="text-center text-sm text-primary font-medium">
