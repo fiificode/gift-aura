@@ -223,7 +223,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   'flex-1 flex items-center justify-center gap-2 rounded-full py-4 text-sm font-semibold text-white transition-all hover:opacity-90',
                   addedToCart
                     ? 'bg-green-600'
-                    : 'bg-gradient-to-r from-primary to-accent'
+                    : 'bg-linear-to-r from-primary to-accent'
                 )}
               >
                 {addedToCart ? (

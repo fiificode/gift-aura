@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Check, CreditCard, Package, Truck, Sparkles, Gift, Loader2 } from 'lucide-react';
 import { useCartStore } from '@/stores/cart-store';
 import { useReferralStore } from '@/stores/referral-store';
@@ -337,10 +338,22 @@ export default function CheckoutPage() {
                   <div className="space-y-3 max-h-64 overflow-y-auto">
                     {items.map((item) => (
                       <div key={item.product.id} className="flex gap-3">
-                        <div className="relative h-16 w-16 rounded-lg bg-muted flex items-center justify-center text-2xl">
-                          {item.product.category === 'Candles' && '🕯️'}
-                          {item.product.category === 'Cards' && '💌'}
-                          {item.product.category === 'Hampers' && '🎁'}
+                        <div className="relative h-16 w-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                          {item.product.image ? (
+                            <Image
+                              src={item.product.image}
+                              alt={item.product.name}
+                              fill
+                              className="object-cover"
+                              sizes="64px"
+                            />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-2xl">
+                              {item.product.category === 'Candles' && '🕯️'}
+                              {item.product.category === 'Cards' && '💌'}
+                              {item.product.category === 'Hampers' && '🎁'}
+                            </div>
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">
