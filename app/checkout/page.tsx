@@ -615,7 +615,7 @@ export default function CheckoutPage() {
                   onClick={() => {
                     sessionStorage.setItem('checkoutShippingInfo', JSON.stringify(shippingInfo));
                     sessionStorage.setItem('checkoutStep', 'payment');
-                    openSignUp({ forceRedirectUrl: '/checkout' });
+                    openSignUp({ fallbackRedirectUrl: '/checkout' });
                   }}
                   className="w-full rounded-full border-2 border-gray-200 py-3 text-gray-700 font-medium hover:border-primary hover:text-primary transition-colors"
                 >
