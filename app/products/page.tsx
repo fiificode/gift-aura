@@ -153,16 +153,16 @@ function ProductsContent() {
       </div>
 
       {/* Birthday Buddy Banner */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+      {/* <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         <BirthdayBuddyBanner variant="compact" />
-      </div>
+      </div> */}
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 flex-1">
         <div className="flex gap-8">
           {/* Sidebar Filters */}
           <aside
             className={cn(
-              'w-64 flex-shrink-0 space-y-6',
+              'w-64 shrink-0 space-y-6',
               'hidden sm:block',
               showMobileFilters && 'block fixed inset-0 z-50 bg-white p-4 sm:static sm:p-0'
             )}

@@ -80,7 +80,7 @@ export default function CheckoutPage() {
     // Store current shipping info in session storage to restore after auth
     sessionStorage.setItem('checkoutShippingInfo', JSON.stringify(shippingInfo));
     sessionStorage.setItem('checkoutStep', 'payment');
-    openSignIn({ redirectUrl: '/checkout' });
+    openSignIn({ fallbackRedirectUrl: '/checkout' });
   };
 
   const handlePaymentSubmit = async () => {
@@ -615,7 +615,7 @@ export default function CheckoutPage() {
                   onClick={() => {
                     sessionStorage.setItem('checkoutShippingInfo', JSON.stringify(shippingInfo));
                     sessionStorage.setItem('checkoutStep', 'payment');
-                    openSignUp({ redirectUrl: '/checkout' });
+                    openSignUp({ forceRedirectUrl: '/checkout' });
                   }}
                   className="w-full rounded-full border-2 border-gray-200 py-3 text-gray-700 font-medium hover:border-primary hover:text-primary transition-colors"
                 >

@@ -125,7 +125,7 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
   // Show sign in prompt if not authenticated
   const handleOpenModal = () => {
     if (!isSignedIn) {
-      openSignIn({ redirectUrl: window.location.pathname });
+      openSignIn({ fallbackRedirectUrl: window.location.pathname });
       return;
     }
     setShowModal(true);
