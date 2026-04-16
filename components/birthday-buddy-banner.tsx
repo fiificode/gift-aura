@@ -53,7 +53,7 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
             <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-linear-to-r from-primary to-accent transition-all duration-500"
-                style={{ width: `${progress}%` }}
+                style={{ width: `GH₵{progress}%` }}
               />
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
@@ -124,7 +124,7 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
                 <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/30">
                   <div
                     className="h-full rounded-full bg-white transition-all duration-500"
-                    style={{ width: `${progress}%` }}
+                    style={{ width: `GH₵{progress}%` }}
                   />
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
                     </div>
                     <div className="text-left">
                       <p className="font-semibold text-foreground">Surprise Hamper</p>
-                      <p className="text-sm text-muted-foreground">Valued at $50+</p>
+                      <p className="text-sm text-muted-foreground">Valued at GH₵50+</p>
                     </div>
                   </button>
 

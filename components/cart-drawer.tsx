@@ -100,7 +100,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           {item.product.name}
                         </h3>
                         <p className="text-sm text-muted-foreground">
-                          ${item.product.price}
+                          GH₵{item.product.price}
                         </p>
                       </div>
 
@@ -149,7 +149,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               {/* Subtotal */}
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="text-lg font-semibold">${total.toFixed(2)}</span>
+                <span className="text-lg font-semibold">GH₵{total.toFixed(2)}</span>
               </div>
 
               {/* Checkout Button */}

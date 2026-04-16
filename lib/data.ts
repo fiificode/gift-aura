@@ -15,7 +15,7 @@ export const products: Product[] = [
     name: 'Birthday Candle Set',
     price: 25,
     category: 'Candles',
-    image: '/products/candle-birthday.jpg',
+    image: '/birthdayCandleSet.jpg',
     description: 'A delightful set of 5 scented birthday candles with vanilla and lavender fragrances.',
     rating: 4.8,
     reviews: 124
@@ -25,7 +25,7 @@ export const products: Product[] = [
     name: 'Luxury Vanilla Soy Candle',
     price: 32,
     category: 'Candles',
-    image: '/products/candle-vanilla.jpg',
+    image: '/LuxuryVCandle.webp',
     description: 'Hand-poured soy candle with rich vanilla notes, 40-hour burn time.',
     rating: 4.9,
     reviews: 89
@@ -35,7 +35,7 @@ export const products: Product[] = [
     name: 'Rose Petal Aromatherapy Candle',
     price: 28,
     category: 'Candles',
-    image: '/products/candle-rose.jpg',
+    image: '/rosePetalCandle.png',
     description: 'Calming rose-scented candle with real dried petals, perfect for relaxation.',
     rating: 4.7,
     reviews: 67
@@ -45,7 +45,7 @@ export const products: Product[] = [
     name: 'Cinnamon Spice Candle',
     price: 22,
     category: 'Candles',
-    image: '/products/candle-cinnamon.jpg',
+    image: '/cinnamonCandle.jpeg',
     description: 'Warm cinnamon spice fragrance for cozy winter evenings.',
     rating: 4.6,
     reviews: 45
@@ -55,7 +55,7 @@ export const products: Product[] = [
     name: 'Handmade Birthday Card',
     price: 8,
     category: 'Cards',
-    image: '/products/card-birthday.jpg',
+    image: '/handmadeBd.jpg',
     description: 'Beautifully handcrafted birthday card with embossed details and gold foil.',
     rating: 4.9,
     reviews: 234
@@ -65,7 +65,7 @@ export const products: Product[] = [
     name: 'Thank You Card Set (6 pack)',
     price: 18,
     category: 'Cards',
-    image: '/products/card-thankyou.jpg',
+    image: '/thankYouSet.webp',
     description: 'Elegant thank you cards with matching envelopes, perfect for any occasion.',
     rating: 4.8,
     reviews: 156
@@ -75,7 +75,7 @@ export const products: Product[] = [
     name: 'Anniversary Love Card',
     price: 10,
     category: 'Cards',
-    image: '/products/card-anniversary.jpg',
+    image: '/anniversary.webp',
     description: 'Romantic anniversary card with heartfelt message and premium paper.',
     rating: 4.7,
     reviews: 98
@@ -85,7 +85,7 @@ export const products: Product[] = [
     name: 'Congratulations Card',
     price: 7,
     category: 'Cards',
-    image: '/products/card-congrats.jpg',
+    image: '/congrats.webp',
     description: 'Celebrate achievements with this vibrant congratulations card.',
     rating: 4.6,
     reviews: 76
@@ -95,7 +95,7 @@ export const products: Product[] = [
     name: 'Deluxe Gift Hamper',
     price: 85,
     category: 'Hampers',
-    image: '/products/hamper-deluxe.jpg',
+    image: '/promo-hamper.png',
     description: 'Premium hamper with chocolates, wine, candles, and bath products.',
     rating: 4.9,
     reviews: 312
@@ -105,7 +105,7 @@ export const products: Product[] = [
     name: 'Spa Day Hamper',
     price: 65,
     category: 'Hampers',
-    image: '/products/hamper-spa.jpg',
+    image: '/spahamper.jpg',
     description: 'Relaxation hamper with bath bombs, lotions, candles, and herbal tea.',
     rating: 4.8,
     reviews: 189
@@ -115,7 +115,7 @@ export const products: Product[] = [
     name: 'Chocolate Lover Hamper',
     price: 55,
     category: 'Hampers',
-    image: '/products/hamper-chocolate.jpg',
+    image: '/chocolate.webp',
     description: 'Decadent chocolate selection with truffles, bars, and hot cocoa mix.',
     rating: 4.9,
     reviews: 267
@@ -125,7 +125,7 @@ export const products: Product[] = [
     name: 'Baby Shower Hamper',
     price: 75,
     category: 'Hampers',
-    image: '/products/hamper-baby.jpg',
+    image: '/babyhamper.webp',
     description: 'Adorable baby hamper with soft toys, blankets, and baby care essentials.',
     rating: 4.7,
     reviews: 145

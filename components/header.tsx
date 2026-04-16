@@ -65,7 +65,7 @@ export function Header({ onCartClick }: HeaderProps) {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     if (searchVal.trim()) {
-      router.push(`/products?q=${encodeURIComponent(searchVal.trim())}`);
+      router.push(`/products?q=GH₵{encodeURIComponent(searchVal.trim())}`);
     }
   }
 

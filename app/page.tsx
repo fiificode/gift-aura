@@ -5,6 +5,58 @@ import { products, testimonials } from '@/lib/data';
 import { ProductCard } from '@/components/product-card';
 import { BirthdayBuddyBanner } from '@/components/birthday-buddy-banner';
 
+import { cn } from '@/lib/utils';
+
+function AvatarCircle({ 
+  emoji, 
+  gradient, 
+  size, 
+  testimonial, 
+  className 
+}: { 
+  emoji: string; 
+  gradient: string; 
+  size: string; 
+  testimonial: { name: string; text: string };
+  className?: string;
+}) {
+  return (
+    <div className={cn('group relative transition-all duration-300 hover:z-50', className)}>
+      {/* Avatar Circle */}
+      <div className={cn(
+        'rounded-full bg-linear-to-br border-4 border-white shadow-xl overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:z-50',
+        gradient,
+        size
+      )}>
+        <span className={cn(
+          'select-none transition-transform duration-500 group-hover:scale-110',
+          size.includes('sm:h-72') ? 'text-7xl sm:text-8xl' : 'text-4xl sm:text-5xl'
+        )}>
+          {emoji}
+        </span>
+      </div>
+
+      {/* Hover Tooltip (Review Message) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 z-50">
+        <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/50 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+          <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1">
+            {testimonial.name}
+          </p>
+          <p className="text-sm font-medium text-foreground leading-relaxed italic">
+            "{testimonial.text}"
+          </p>
+          {/* Rating stars in tooltip */}
+          <div className="flex gap-0.5 mt-2">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <Star key={s} className="h-3 w-3 fill-amber-400 text-amber-400" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const featuredProducts = products.slice(0, 7);
 
@@ -194,22 +246,19 @@ export default function HomePage() {
             </Link>
 
             {/* Card 2 — Cards (gradient placeholder) */}
-            <Link
+              <Link
               href="/products?category=Cards"
-              className="group relative overflow-hidden rounded-2xl"
-              style={{ height: '220px', background: 'linear-gradient(135deg, #fdf6f0 0%, #fde8d8 100%)' }}
+              className="group relative overflow-hidden rounded-2xl bg-muted"
+              style={{ height: '220px' }}
             >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center space-y-2 group-hover:scale-110 transition-transform duration-500">
-                  <div className="text-7xl">💌</div>
-                  <div className="flex gap-1 justify-center">
-                    {['🌸','⭐','💛'].map((e, i) => (
-                      <span key={i} className="text-2xl opacity-60">{e}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+              <Image
+                src="/cards.webp"
+                alt="Cards"
+                fill
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
               <span className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
                 CARDS
               </span>
@@ -235,22 +284,19 @@ export default function HomePage() {
             </Link>
 
             {/* Card 4 — All Gifts (gradient placeholder) */}
-            <Link
-              href="/products"
-              className="group relative overflow-hidden rounded-2xl"
-              style={{ height: '220px', background: 'linear-gradient(135deg, #fce8f0 0%, #fff0f9 100%)' }}
+                 <Link
+              href="/products?category=Cards"
+              className="group relative overflow-hidden rounded-2xl bg-muted"
+              style={{ height: '220px' }}
             >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center space-y-2 group-hover:scale-110 transition-transform duration-500">
-                  <div className="text-7xl">🎁</div>
-                  <div className="flex gap-1 justify-center">
-                    {['✨','🎀','🎉'].map((e, i) => (
-                      <span key={i} className="text-2xl opacity-60">{e}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
+              <Image
+                src="/AlllGifts.webp"
+                alt="All Gifts"
+                fill
+                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
               <span className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
                 ALL GIFTS
               </span>
@@ -313,42 +359,112 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
-      <section className="py-16 bg-muted/30">
+      {/* ── TESTIMONIALS (Social Proof Cluster) ── */}
+      <section className="py-32 bg-white overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-center mb-12">What Our Customers Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="rounded-2xl bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-gold text-gold" />
-                  ))}
-                </div>
-                <p className="text-foreground mb-4">&ldquo;{testimonial.text}&rdquo;</p>
-                <p className="font-medium text-foreground">— {testimonial.name}</p>
-              </div>
-            ))}
+          <div className="text-center mb-20 px-4">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight max-w-4xl mx-auto">
+              Over 350+ Customer reviews form our client
+            </h2>
+          </div>
+
+          {/* Avatar Cluster Layout */}
+          <div className="relative flex justify-center items-center h-[450px] w-full max-w-5xl mx-auto">
+            
+            {/* Left Small Stack */}
+            <div className="absolute left-[5%] lg:left-[10%] flex flex-col gap-8 -translate-y-8">
+              <AvatarCircle
+                emoji="👨‍🎨"
+                gradient="from-pink-400 to-rose-500"
+                size="h-24 w-24 sm:h-32 sm:w-32"
+                testimonial={{ name: "Alex P.", text: "The attention to detail in the packaging is superb!" }}
+              />
+              <AvatarCircle
+                emoji="🧑‍🚀"
+                gradient="from-blue-400 to-indigo-500"
+                size="h-24 w-24 sm:h-32 sm:w-32"
+                testimonial={{ name: "Jordan S.", text: "Fastest shipping I've ever experienced." }}
+              />
+            </div>
+
+            {/* Central Large Pair */}
+            <div className="flex gap-4 sm:gap-12 z-10">
+              <AvatarCircle
+                emoji="👩‍🎤"
+                gradient="from-amber-300 to-orange-500"
+                size="h-44 w-44 sm:h-72 sm:w-72"
+                testimonial={{ name: "Sarah M.", text: "The candles smell divine! My house feels like a spa now." }}
+                className="translate-y-12"
+              />
+              <AvatarCircle
+                emoji="🤵"
+                gradient="from-teal-300 to-emerald-500"
+                size="h-44 w-44 sm:h-72 sm:w-72"
+                testimonial={{ name: "James K.", text: "Buddy Bonus is a total win. Got my gift hamper last week!" }}
+                className="-translate-y-12"
+              />
+            </div>
+
+            {/* Right Small Stack */}
+            <div className="absolute right-[5%] lg:right-[10%] flex flex-col gap-8 translate-y-8">
+              <AvatarCircle
+                emoji="👩‍🎨"
+                gradient="from-purple-400 to-fuchsia-500"
+                size="h-24 w-24 sm:h-32 sm:w-32"
+                testimonial={{ name: "Emily R.", text: "Quality handmade cards that actually mean something." }}
+              />
+              <AvatarCircle
+                emoji="🧑‍💼"
+                gradient="from-sky-400 to-blue-500"
+                size="h-24 w-24 sm:h-32 sm:w-32"
+                testimonial={{ name: "Michael T.", text: "Support team was so helpful with my custom order." }}
+              />
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── CTA SECTION ── */}
+      {/* ── CTA SECTION (Banner Style) ── */}
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-linear-to-r from-primary to-accent p-8 sm:p-12 text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">Ready to Find the Perfect Gift?</h2>
-            <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-              Browse our curated collection of candles, cards, and hampers. Every gift
-              tells a story — let&apos;s make yours magical.
-            </p>
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-primary hover:bg-white/90 transition-colors"
-            >
-              Start Shopping
-              <ArrowRight className="h-5 w-5" />
-            </Link>
+          <div
+            className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl py-16 sm:py-24"
+            style={{
+              background: 'linear-gradient(120deg, #c471ed 0%, #a855c8 20%, #d9468f 45%, #f87171 65%, #a855c8 85%, #c471ed 100%)',
+            }}
+          >
+            {/* Sheen/Silky effects */}
+            <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-[120%] rounded-full bg-pink-300/10 blur-[100px]" />
+
+            <div className="relative z-10 flex flex-col items-center justify-center gap-6 px-6 text-center">
+              {/* Badge pill */}
+              <div className="rounded-full border border-white/60 bg-white/10 backdrop-blur-sm px-5 py-1.5 text-xs font-semibold text-white tracking-widest uppercase">
+                Shop Now
+              </div>
+
+              {/* Headline */}
+              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight max-w-4xl uppercase drop-shadow-lg">
+                Exclusive Gift Offers <br /> Await For Your Selection
+              </h2>
+
+              <p className="text-white/80 max-w-2xl mx-auto text-sm sm:text-base font-medium">
+                Every gift tells a story — find the perfect one for your loved ones today.
+              </p>
+
+              {/* CTA Pill */}
+              <Link
+                href="/products"
+                className="mt-4 inline-flex items-center gap-3 rounded-full bg-white px-8 py-3.5 text-sm font-bold text-foreground hover:bg-white/90 transition-all shadow-2xl hover:-translate-y-1 active:translate-y-0"
+              >
+                CHECK IT NOW
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-white">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

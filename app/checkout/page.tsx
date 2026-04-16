@@ -294,7 +294,7 @@ export default function CheckoutPage() {
                           Processing...
                         </>
                       ) : (
-                        `Pay $${total.toFixed(2)}`
+                        `Pay GH₵GH₵{total.toFixed(2)}`
                       )}
                     </button>
                   </div>
@@ -351,7 +351,7 @@ export default function CheckoutPage() {
                           </p>
                         </div>
                         <p className="font-medium text-sm">
-                          ${(item.product.price * item.quantity).toFixed(2)}
+                          GH₵{(item.product.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
                     ))}
@@ -360,21 +360,21 @@ export default function CheckoutPage() {
                   <div className="border-t border-border mt-4 pt-4 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${subtotal.toFixed(2)}</span>
+                      <span>GH₵{subtotal.toFixed(2)}</span>
                     </div>
                     {discount > 0 && (
                       <div className="flex justify-between text-sm text-green-600">
                         <span>Discount (10%)</span>
-                        <span>-${discount.toFixed(2)}</span>
+                        <span>-GH₵{discount.toFixed(2)}</span>
                       </div>
                     )}
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                      <span>{shipping === 0 ? 'Free' : `GH₵GH₵{shipping.toFixed(2)}`}</span>
                     </div>
                     <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
                       <span>Total</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>GH₵{total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
