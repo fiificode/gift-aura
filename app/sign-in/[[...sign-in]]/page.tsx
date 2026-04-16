@@ -4,7 +4,7 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-orange-50 px-4">
       <div className="w-full max-w-md">
-        <SignIn 
+        <SignIn
           appearance={{
             elements: {
               rootBox: "mx-auto",
@@ -18,7 +18,8 @@ export default function SignInPage() {
               footerActionLink: "text-primary hover:text-primary/80 font-medium",
             },
           }}
-          redirectUrl="/checkout"
+          afterSignInUrl="/checkout"
+          afterSignUpUrl="/checkout"
         />
       </div>
     </div>
