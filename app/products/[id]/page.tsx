@@ -120,7 +120,7 @@ export default function ProductPage({ params }: ProductPageProps) {
             </div>
             {/* Thumbnails - using same image as placeholder, in real app would have multiple images */}
             <div className="grid grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((i) => (
+              {[1].map((i) => (
                 <button
                   key={i}
                   className={cn(
@@ -220,10 +220,10 @@ export default function ProductPage({ params }: ProductPageProps) {
               <button
                 onClick={handleAddToCart}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-2 rounded-full py-4 text-sm font-semibold transition-all',
+                  'flex-1 flex items-center justify-center gap-2 rounded-full py-4 text-sm font-semibold text-white transition-all hover:opacity-90',
                   addedToCart
-                    ? 'bg-green-600 text-white'
-                    : 'bg-foreground text-white hover:bg-foreground/90'
+                    ? 'bg-green-600'
+                    : 'bg-gradient-to-r from-primary to-accent'
                 )}
               >
                 {addedToCart ? (
