@@ -18,8 +18,6 @@ export default function SignUpPage() {
               footerActionLink: "text-primary hover:text-primary/80 font-medium",
             },
           }}
-          afterSignInUrl="/checkout"
-          afterSignUpUrl="/checkout"
         />
       </div>
     </div>

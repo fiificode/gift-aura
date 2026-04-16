@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense, useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { UserButton, SignInButton, useUser } from '@clerk/nextjs';
 import {
@@ -13,8 +14,8 @@ import {
   HelpCircle,
   Headphones,
   User,
+  Loader2,
 } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
 import { useCartStore } from '@/stores/cart-store';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +43,27 @@ const categoryPills = [
   { label: 'Hampers', href: '/products?category=Hampers', value: 'Hampers' },
 ];
 
+// Separate component for search sync that uses useSearchParams
+function SearchSync({ onQueryChange }: { onQueryChange: (query: string) => void }) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const query = searchParams.get('q') || '';
+    onQueryChange(query);
+  }, [searchParams, onQueryChange]);
+
+  return null;
+}
+
+function SearchSyncFallback() {
+  return (
+    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/60 w-full max-w-xs">
+      <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+      <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+    </div>
+  );
+}
+
 export function Header({ onCartClick }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
@@ -50,14 +72,11 @@ export function Header({ onCartClick }: HeaderProps) {
   const totalItems = useCartStore((state) => state.getTotalItems());
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { isSignedIn } = useUser();
 
-  // Sync header search with URL query param
-  useEffect(() => {
-    const query = searchParams.get('q') || '';
+  const handleQueryChange = (query: string) => {
     setSearchVal(query);
-  }, [searchParams]);
+  };
 
   const catRef = useRef<HTMLDivElement>(null);
   const newRef = useRef<HTMLDivElement>(null);
