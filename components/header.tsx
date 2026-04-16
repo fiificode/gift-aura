@@ -2,8 +2,17 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Menu, X, Search, Gift } from 'lucide-react';
-import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import {
+  ShoppingCart,
+  Menu,
+  X,
+  Search,
+  ChevronDown,
+  HelpCircle,
+  Headphones,
+} from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import { useCartStore } from '@/stores/cart-store';
 import { cn } from '@/lib/utils';
 
@@ -11,119 +20,263 @@ interface HeaderProps {
   onCartClick: () => void;
 }
 
+const categories = [
+  { label: 'All Products', href: '/products' },
+  { label: 'Candles', href: '/products?category=Candles' },
+  { label: 'Cards', href: '/products?category=Cards' },
+  { label: 'Hampers', href: '/products?category=Hampers' },
+];
+
+const newArrivals = [
+  { label: 'Birthday Candle Set', href: '/products' },
+  { label: 'Deluxe Gift Hamper', href: '/products?category=Hampers' },
+  { label: 'Handmade Birthday Card', href: '/products?category=Cards' },
+];
+
+const categoryPills = [
+  { label: 'All', href: '/products', value: '' },
+  { label: 'Candles', href: '/products?category=Candles', value: 'Candles' },
+  { label: 'Cards', href: '/products?category=Cards', value: 'Cards' },
+  { label: 'Hampers', href: '/products?category=Hampers', value: 'Hampers' },
+];
+
 export function Header({ onCartClick }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [catOpen, setCatOpen] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState('');
   const totalItems = useCartStore((state) => state.getTotalItems());
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/products', label: 'Shop' },
-    { href: '/support', label: 'Support' },
-  ];
+  const catRef = useRef<HTMLDivElement>(null);
+  const newRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false);
+      if (newRef.current && !newRef.current.contains(e.target as Node)) setNewOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (searchVal.trim()) {
+      router.push(`/products?q=${encodeURIComponent(searchVal.trim())}`);
+    }
+  }
+
+  // Determine active category pill
+  const activeCategory = pathname === '/products'
+    ? (typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('category') ?? ''
+        : '')
+    : null;
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-border">
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-border shadow-sm">
+      {/* ── ROW 1 ── hamburger | logo (center) | utility nav */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-10 w-10 overflow-hidden rounded-xl">
-              <Image
-                src="/logo.jpg"
-                alt="GiftAura"
-                fill
-                className="object-cover"
-                priority
-              />
+        <div className="flex h-14 items-center justify-between gap-4">
+
+          {/* Left — hamburger */}
+          <button
+            id="mobile-menu-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="flex items-center justify-center h-9 w-9 rounded-lg text-foreground hover:bg-muted transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+
+          {/* Center — Logo */}
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+            <div className="relative h-8 w-8 overflow-hidden rounded-lg ring-2 ring-primary/20">
+              <Image src="/logo.jpg" alt="GiftAura" fill className="object-cover" priority />
             </div>
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-xl font-bold text-transparent">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-lg font-bold text-transparent tracking-tight">
               GiftAura
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Actions */}
-          <div className="flex items-center gap-4">
+          {/* Right — utility links + cart */}
+          <div className="flex items-center gap-1">
             <Link
-              href="/products"
-              className="hidden sm:flex items-center justify-center h-10 w-10 rounded-full bg-muted hover:bg-muted/80 transition-colors"
+              href="/support"
+              className="hidden sm:flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted"
             >
-              <Search className="h-5 w-5 text-muted-foreground" />
+              Support
+            </Link>
+            <Link
+              href="/support#faq"
+              className="hidden sm:flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted"
+            >
+              FAQs
             </Link>
 
+            {/* Cart */}
             <button
+              id="cart-button"
               onClick={onCartClick}
-              className="relative flex items-center justify-center h-10 w-10 rounded-full bg-muted hover:bg-muted/80 transition-colors"
+              className="relative flex items-center justify-center h-9 w-9 rounded-full bg-muted hover:bg-muted/80 transition-colors ml-1"
               aria-label="Open cart"
             >
-              <ShoppingCart className="h-5 w-5 text-muted-foreground" />
+              <ShoppingCart className="h-4 w-4 text-foreground" />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-[9px] font-bold text-white">
                   {totalItems > 99 ? '99+' : totalItems}
                 </span>
               )}
             </button>
-
-            <Link
-              href="/products"
-              className="hidden sm:flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
-            >
-              <Gift className="h-4 w-4" />
-              Shop Now
-            </Link>
-
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden flex items-center justify-center h-10 w-10 rounded-lg hover:bg-muted transition-colors"
-            >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border py-4">
-            <nav className="flex flex-col gap-2">
-              {navLinks.map((link) => (
+      {/* ── ROW 2 ── categories dropdown | new arrivals dropdown | search | pills */}
+      <div className="border-t border-border/60 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-11 items-center gap-2">
+
+            {/* Categories dropdown */}
+            <div ref={catRef} className="relative hidden sm:block">
+              <button
+                id="categories-dropdown"
+                onClick={() => { setCatOpen((v) => !v); setNewOpen(false); }}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted rounded-lg transition-colors whitespace-nowrap"
+              >
+                Categories
+                <ChevronDown className={cn('h-3.5 w-3.5 text-muted-foreground transition-transform duration-200', catOpen && 'rotate-180')} />
+              </button>
+              {catOpen && (
+                <div className="absolute top-full left-0 mt-1 w-52 rounded-xl border border-border bg-white shadow-lg py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  {categories.map((c) => (
+                    <Link
+                      key={c.href}
+                      href={c.href}
+                      onClick={() => setCatOpen(false)}
+                      className="flex items-center px-4 py-2.5 text-sm text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
+                    >
+                      {c.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* New Arrivals dropdown */}
+            <div ref={newRef} className="relative hidden sm:block">
+              <button
+                id="new-arrivals-dropdown"
+                onClick={() => { setNewOpen((v) => !v); setCatOpen(false); }}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted rounded-lg transition-colors whitespace-nowrap"
+              >
+                New Arrivals
+                <ChevronDown className={cn('h-3.5 w-3.5 text-muted-foreground transition-transform duration-200', newOpen && 'rotate-180')} />
+              </button>
+              {newOpen && (
+                <div className="absolute top-full left-0 mt-1 w-56 rounded-xl border border-border bg-white shadow-lg py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  {newArrivals.map((item) => (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      onClick={() => setNewOpen(false)}
+                      className="flex items-center px-4 py-2.5 text-sm text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="hidden sm:block h-5 w-px bg-border mx-1" />
+
+            {/* Search bar */}
+            <form
+              onSubmit={handleSearch}
+              className="flex flex-1 items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/60 hover:bg-muted transition-colors group max-w-xs"
+            >
+              <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+              <input
+                id="search-input"
+                type="text"
+                value={searchVal}
+                onChange={(e) => setSearchVal(e.target.value)}
+                placeholder="Search gifts..."
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
+              />
+            </form>
+
+            {/* Divider */}
+            <div className="hidden md:block h-5 w-px bg-border mx-1" />
+
+            {/* Category pills */}
+            <nav className="hidden md:flex items-center gap-1" aria-label="Category shortcuts">
+              {categoryPills.map((pill) => (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-lg px-4 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                  key={pill.value}
+                  href={pill.href}
+                  className={cn(
+                    'px-3 py-1 rounded-full text-sm font-medium transition-colors whitespace-nowrap',
+                    activeCategory === pill.value
+                      ? 'bg-foreground text-white'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  )}
                 >
-                  {link.label}
+                  {pill.label}
                 </Link>
               ))}
-              <Link
-                href="/products"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-4 py-3 text-sm font-medium text-white"
-              >
-                <Gift className="h-4 w-4" />
-                Shop Now
-              </Link>
             </nav>
+
           </div>
-        )}
+        </div>
       </div>
+
+      {/* ── MOBILE MENU ── */}
+      {mobileMenuOpen && (
+        <div className="border-t border-border bg-white md:hidden">
+          <div className="mx-auto max-w-7xl px-4 py-3 space-y-1">
+            {/* Search on mobile */}
+            <form
+              onSubmit={(e) => { handleSearch(e); setMobileMenuOpen(false); }}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted mb-2"
+            >
+              <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <input
+                type="text"
+                value={searchVal}
+                onChange={(e) => setSearchVal(e.target.value)}
+                placeholder="Search gifts..."
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+              />
+            </form>
+
+            {/* Nav links */}
+            {[
+              { href: '/', label: 'Home' },
+              { href: '/products', label: 'All Products' },
+              { href: '/products?category=Candles', label: 'Candles' },
+              { href: '/products?category=Cards', label: 'Cards' },
+              { href: '/products?category=Hampers', label: 'Hampers' },
+              { href: '/support', label: 'Support' },
+              { href: '/support#faq', label: 'FAQs' },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

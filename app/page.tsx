@@ -1,93 +1,149 @@
 import Link from 'next/link';
-import { ArrowRight, Star, Gift, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, Star, Sparkles } from 'lucide-react';
 import { products, testimonials } from '@/lib/data';
 import { ProductCard } from '@/components/product-card';
 import { BirthdayBuddyBanner } from '@/components/birthday-buddy-banner';
-import { cn } from '@/lib/utils';
 
 export default function HomePage() {
   const featuredProducts = products.slice(0, 6);
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-linear-to-br from-primary/5 via-white to-accent/5 py-16 sm:py-24 lg:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
-            <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-primary">
+
+      {/* ── HERO + PROMO BANNERS — contained, rounded cards ── */}
+      <section className="py-4 sm:py-5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-3">
+
+          {/* Hero card */}
+          <div
+            className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl"
+            style={{ height: 'min(68vh, 560px)' }}
+          >
+            <Image
+              src="/hero-bg.png"
+              alt="GiftAura — gifts, candles and hampers"
+              fill
+              priority
+              className="object-cover object-center"
+              sizes="100vw"
+            />
+            {/* Dark gradient overlay */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/72 via-black/30 to-black/10" />
+            {/* Pink brand tint */}
+            <div className="absolute inset-0 bg-linear-to-br from-primary/20 via-transparent to-accent/10" />
+
+            {/* Content */}
+            <div className="relative z-10 flex h-full flex-col items-center justify-end pb-12 px-4 text-center">
+              {/* Badge pill */}
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-sm px-4 py-1.5 border border-white/30">
+                <Sparkles className="h-3.5 w-3.5 text-white" />
+                <span className="text-xs font-semibold text-white tracking-wide uppercase">
                   New Collection Available
                 </span>
               </div>
-              <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+
+              {/* Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight max-w-3xl drop-shadow-lg">
                 Make Every Gift{' '}
-                <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-pink-300 to-amber-300 bg-clip-text text-transparent">
                   Magical
                 </span>{' '}
                 🎁
               </h1>
-              <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0">
-                Discover premium candles, heartfelt cards, and curated hampers for
-                every special occasion. Thoughtful gifts, delivered with love.
+
+              <p className="mt-3 text-base sm:text-lg text-white/80 max-w-xl drop-shadow">
+                Premium candles, heartfelt cards &amp; curated hampers — thoughtful gifts, delivered with love.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link
-                  href="/products"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-primary to-accent px-8 py-4 text-base font-medium text-white hover:opacity-90 transition-opacity shadow-lg shadow-primary/25"
-                >
-                  Shop Now
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-                <Link
-                  href="/products?category=Hampers"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-border bg-white px-8 py-4 text-base font-medium text-foreground hover:bg-muted transition-colors"
-                >
-                  <Gift className="h-5 w-5" />
-                  View Hampers
-                </Link>
-              </div>
-              <div className="flex items-center gap-4 justify-center lg:justify-start text-sm text-muted-foreground">
-                <div className="flex -space-x-2">
+
+              {/* CTA — white pill with dark arrow circle */}
+              <Link
+                href="/products"
+                id="hero-cta"
+                className="mt-7 inline-flex items-center gap-2.5 rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-foreground hover:bg-white/90 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Explore Products
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-white">
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </span>
+              </Link>
+
+              {/* Trust row */}
+              <div className="mt-5 flex items-center gap-3 text-white/70 text-sm">
+                <div className="flex -space-x-1.5">
                   {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
-                      className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-accent border-2 border-white flex items-center justify-center text-[10px] text-white font-medium"
+                      className="h-7 w-7 rounded-full bg-linear-to-br from-pink-400 to-amber-400 border-2 border-white/50 flex items-center justify-center text-[9px] font-bold text-white"
                     >
                       {String.fromCharCode(64 + i)}
                     </div>
                   ))}
                 </div>
-                <p>Trusted by 10,000+ happy customers</p>
+                <span>Trusted by 10,000+ happy customers</span>
               </div>
             </div>
-            <div className="relative">
-              <div className="relative aspect-square rounded-3xl bg-linear-to-br from-primary/20 to-accent/20 p-8">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-[200px] animate-bounce">🎁</div>
-                </div>
-                {/* Floating elements */}
-                <div className="absolute top-4 left-4 rounded-2xl bg-white p-4 shadow-lg animate-pulse">
-                  <div className="text-3xl">🕯️</div>
-                </div>
-                <div className="absolute bottom-8 right-4 rounded-2xl bg-white p-4 shadow-lg animate-pulse delay-75">
-                  <div className="text-3xl">💌</div>
-                </div>
-                <div className="absolute top-1/2 -right-4 rounded-2xl bg-white p-4 shadow-lg animate-pulse delay-150">
-                  <div className="text-3xl">✨</div>
-                </div>
+          </div>
+
+          {/* Two promo cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+            {/* Promo 1 — Candles */}
+            <div className="relative overflow-hidden rounded-2xl" style={{ height: '210px' }}>
+              <Image
+                src="/promo-candles.png"
+                alt="Scented candle collection"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 640px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-r from-amber-900/72 via-amber-900/40 to-transparent" />
+              <div className="relative z-10 flex h-full flex-col justify-center px-8">
+                <p className="text-xs font-semibold uppercase tracking-widest text-amber-200 mb-1">Bestsellers</p>
+                <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug max-w-[190px]">
+                  Where warmth meets artisan craft
+                </h2>
+                <Link
+                  href="/products?category=Candles"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-white/50 bg-white/20 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-white hover:bg-white/30 transition-colors w-fit"
+                >
+                  Shop Now <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
             </div>
+
+            {/* Promo 2 — Hampers */}
+            <div className="relative overflow-hidden rounded-2xl" style={{ height: '210px' }}>
+              <Image
+                src="/promo-hamper.png"
+                alt="Premium gift hamper"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 640px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-r from-pink-900/65 via-pink-900/35 to-transparent" />
+              <div className="relative z-10 flex h-full flex-col justify-center px-8">
+                <p className="text-xs font-semibold uppercase tracking-widest text-pink-200 mb-1">Curated for you</p>
+                <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug max-w-[200px]">
+                  Enchanting gifts for every occasion
+                </h2>
+                <Link
+                  href="/products?category=Hampers"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-white/50 bg-white/20 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-white hover:bg-white/30 transition-colors w-fit"
+                >
+                  Shop Now <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Categories Preview */}
+      {/* ── CATEGORIES ── */}
       <section className="py-16 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-center mb-12">Shop by Category</h2>
+          <h2 className="text-2xl font-bold text-center mb-12">Browse by Category</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               { name: 'Candles', icon: '🕯️', desc: 'Scented & decorative', href: '/products?category=Candles' },
@@ -111,15 +167,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* ── FEATURED PRODUCTS ── */}
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold">Featured Products</h2>
-            <Link
-              href="/products"
-              className="flex items-center gap-1 text-primary font-medium hover:underline"
-            >
+            <Link href="/products" className="flex items-center gap-1 text-primary font-medium hover:underline">
               View all <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -131,23 +184,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Birthday Buddy Bonus Banner */}
+      {/* ── BIRTHDAY BUDDY BONUS ── */}
       <section className="py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <BirthdayBuddyBanner />
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* ── TESTIMONIALS ── */}
       <section className="py-16 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-center mb-12">What Our Customers Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((testimonial) => (
-              <div
-                key={testimonial.id}
-                className="rounded-2xl bg-white p-6 shadow-sm"
-              >
+              <div key={testimonial.id} className="rounded-2xl bg-white p-6 shadow-sm">
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-gold text-gold" />
@@ -161,7 +211,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* ── CTA SECTION ── */}
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl bg-linear-to-r from-primary to-accent p-8 sm:p-12 text-center text-white">
@@ -180,7 +230,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }
-
