@@ -257,14 +257,14 @@ export function BirthdayBuddyBanner({ variant = 'banner', className }: BirthdayB
           </div>
 
           {/* Demo button for testing */}
-          <div className="mt-4 pt-4 border-t border-white/20">
+          {/* <div className="mt-4 pt-4 border-t border-white/20">
             <button
               onClick={handleSimulateReferral}
               className="text-xs text-white/70 hover:text-white transition-colors"
             >
               + Simulate referral (demo only)
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 

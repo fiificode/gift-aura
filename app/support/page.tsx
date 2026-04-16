@@ -39,7 +39,7 @@ export default function SupportPage() {
   return (
     <div className="min-h-screen bg-muted/30">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-primary to-accent py-16">
+      <div className="bg-linear-to-r from-primary to-accent py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center text-white">
           <h1 className="text-3xl sm:text-4xl font-bold mb-4">How Can We Help?</h1>
           <p className="text-lg opacity-90 max-w-2xl mx-auto">
@@ -102,7 +102,7 @@ export default function SupportPage() {
                       </span>
                       <ChevronDown
                         className={cn(
-                          'h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform',
+                          'h-5 w-5 text-muted-foreground shrink-0 transition-transform',
                           openFaq === index && 'rotate-180'
                         )}
                       />
@@ -134,7 +134,7 @@ export default function SupportPage() {
                   />
                   <button
                     type="submit"
-                    className="rounded-lg bg-gradient-to-r from-primary to-accent px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity"
+                    className="rounded-lg bg-linear-to-r from-primary to-accent px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity"
                   >
                     Track
                   </button>
@@ -155,7 +155,7 @@ export default function SupportPage() {
                     </div>
                   </div>
                   <div className="h-2 w-full rounded-full bg-muted-foreground/20 overflow-hidden">
-                    <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-primary to-accent" />
+                    <div className="h-full w-2/3 rounded-full bg-linear-to-r from-primary to-accent" />
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
                     Estimated delivery: 2-3 business days
@@ -238,7 +238,7 @@ export default function SupportPage() {
                   </div>
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-gradient-to-r from-primary to-accent py-3 text-white font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                    className="w-full rounded-lg bg-linear-to-r from-primary to-accent py-3 text-white font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                   >
                     <Send className="h-4 w-4" />
                     Send Message
@@ -254,7 +254,7 @@ export default function SupportPage() {
               <h3 className="font-semibold mb-4">Contact Info</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
                   <div>
@@ -268,22 +268,22 @@ export default function SupportPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">
                     <Phone className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium text-sm">Phone</p>
                     <a
-                      href="tel:+15551234567"
+                      href="tel:+233551234567"
                       className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
-                      +1 (555) 123-4567
+                      +233 551234567
                     </a>
                     <p className="text-xs text-muted-foreground">Mon-Fri, 9am-6pm PT</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div>
@@ -297,13 +297,13 @@ export default function SupportPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-gradient-to-r from-primary to-accent p-6 text-white">
+            <div className="rounded-2xl bg-linear-to-r from-primary to-accent p-6 text-white">
               <h3 className="font-semibold mb-2">Need Urgent Help?</h3>
               <p className="text-sm opacity-90 mb-4">
                 Our support team is here to help you with any questions or concerns.
               </p>
               <a
-                href="tel:+15551234567"
+                href="tel:+233551234567"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-primary hover:bg-white/90 transition-colors"
               >
                 <Phone className="h-4 w-4" />
