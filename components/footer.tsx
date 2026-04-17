@@ -25,7 +25,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              Making every gift magical. Creating smiles, one gift at a time.
+              Creating smiles, one gift at a time.
             </p>
             <div className="flex items-center gap-3">
               <a
