@@ -1,113 +1,131 @@
-'use client';
+"use client"
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useUser, useClerk } from '@clerk/nextjs';
-import { ArrowLeft, Check, CreditCard, Package, Truck, Sparkles, Gift, Loader2, Smartphone, Copy, MapPin, User } from 'lucide-react';
-import { useCartStore } from '@/stores/cart-store';
-import { referralService, type ReferralStats } from '@/lib/referral-service';
-import { BirthdayBuddyBanner } from '@/components/birthday-buddy-banner';
-import { cn } from '@/lib/utils';
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { useUser, useClerk } from "@clerk/nextjs"
+import {
+  ArrowLeft,
+  Check,
+  CreditCard,
+  Package,
+  Truck,
+  Sparkles,
+  Gift,
+  Loader2,
+  Smartphone,
+  Copy,
+  MapPin,
+  User,
+} from "lucide-react"
+import { useCartStore } from "@/stores/cart-store"
+import { referralService, type ReferralStats } from "@/lib/referral-service"
+import { BirthdayBuddyBanner } from "@/components/birthday-buddy-banner"
+import { cn } from "@/lib/utils"
 
-type CheckoutStep = 'shipping' | 'payment' | 'review' | 'success';
+type CheckoutStep = "shipping" | "payment" | "review" | "success"
 
 export default function CheckoutPage() {
-  const items = useCartStore((state) => state.items);
-  const getTotalPrice = useCartStore((state) => state.getTotalPrice);
-  const getTotalItems = useCartStore((state) => state.getTotalItems);
-  const clearCart = useCartStore((state) => state.clearCart);
-  const { isSignedIn, user } = useUser();
-  const { openSignIn, openSignUp } = useClerk();
+  const items = useCartStore((state) => state.items)
+  const getTotalPrice = useCartStore((state) => state.getTotalPrice)
+  const getTotalItems = useCartStore((state) => state.getTotalItems)
+  const clearCart = useCartStore((state) => state.clearCart)
+  const { isSignedIn, user } = useUser()
+  const { openSignIn, openSignUp } = useClerk()
 
-  const [step, setStep] = useState<CheckoutStep>('shipping');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'momo'>('card');
-  const [momoProvider, setMomoProvider] = useState<'mtn' | 'telecel' | 'airteltigo'>('mtn');
+  const [step, setStep] = useState<CheckoutStep>("shipping")
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "momo">("card")
+  const [momoProvider, setMomoProvider] = useState<
+    "mtn" | "telecel" | "airteltigo"
+  >("mtn")
   const [referralStats, setReferralStats] = useState<ReferralStats>({
     totalReferrals: 0,
     completedReferrals: 0,
     pendingReferrals: 0,
     canClaimReward: false,
     hasClaimedReward: false,
-    badge: 'starter',
+    badge: "starter",
     progress: 0,
     rewardType: null,
     referralCode: null,
-  });
+  })
   const [shippingInfo, setShippingInfo] = useState({
-    name: '',
-    email: user?.primaryEmailAddress?.emailAddress || '',
-    phone: '',
-    address: '',
-    city: '',
-    zip: '',
-  });
+    name: "",
+    email: user?.primaryEmailAddress?.emailAddress || "",
+    phone: "",
+    address: "",
+    city: "",
+    zip: "",
+  })
 
   // Load referral stats when user is available
   useEffect(() => {
     async function loadReferralStats() {
-      if (!user?.id) return;
+      if (!user?.id) return
       try {
-        const stats = await referralService.getReferralStats(user.id);
-        setReferralStats(stats);
+        const stats = await referralService.getReferralStats(user.id)
+        setReferralStats(stats)
       } catch (error) {
-        console.error('Error loading referral stats:', error);
+        console.error("Error loading referral stats:", error)
       }
     }
-    loadReferralStats();
-  }, [user]);
+    loadReferralStats()
+  }, [user])
 
-  const subtotal = getTotalPrice();
-  const totalItems = getTotalItems();
-  const discount = referralStats.hasClaimedReward && referralStats.rewardType === 'discount_10' ? subtotal * 0.1 : 0;
+  const subtotal = getTotalPrice()
+  const totalItems = getTotalItems()
+  const discount =
+    referralStats.hasClaimedReward && referralStats.rewardType === "discount_10"
+      ? subtotal * 0.1
+      : 0
   // Shipping: GH₵10 for single item, free for 2+ items
-  const shipping = totalItems >= 2 ? 0 : 10;
-  const total = subtotal - discount + shipping;
+  const shipping = totalItems >= 2 ? 0 : 10
+  const total = subtotal - discount + shipping
 
   const handleShippingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     // Check if user is authenticated before proceeding
     if (!isSignedIn) {
-      setShowAuthPrompt(true);
-      return;
+      setShowAuthPrompt(true)
+      return
     }
-    setStep('payment');
-  };
+    setStep("payment")
+  }
 
   const handleAuthAndContinue = () => {
     // Store current shipping info in session storage to restore after auth
-    sessionStorage.setItem('checkoutShippingInfo', JSON.stringify(shippingInfo));
-    sessionStorage.setItem('checkoutStep', 'payment');
-    openSignIn({ fallbackRedirectUrl: '/checkout' });
-  };
+    sessionStorage.setItem("checkoutShippingInfo", JSON.stringify(shippingInfo))
+    sessionStorage.setItem("checkoutStep", "payment")
+    openSignIn({ fallbackRedirectUrl: "/checkout" })
+  }
 
   const handlePaymentSubmit = async () => {
-    setIsProcessing(true);
+    setIsProcessing(true)
     // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsProcessing(false);
-    setStep('success');
-    clearCart();
-  };
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    setIsProcessing(false)
+    setStep("success")
+    clearCart()
+  }
 
-  if (items.length === 0 && step !== 'success') {
+  if (items.length === 0 && step !== "success") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="text-6xl mb-4">🛒</div>
-        <h1 className="text-2xl font-bold mb-2">Your cart is empty</h1>
-        <p className="text-muted-foreground mb-6">
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <div className="mb-4 text-6xl">🛒</div>
+        <h1 className="mb-2 text-2xl font-bold">Your cart is empty</h1>
+        <p className="mb-6 text-muted-foreground">
           Add some items to your cart before checking out
         </p>
         <Link
           href="/products"
-          className="rounded-full bg-linear-to-r from-primary to-accent px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity"
+          className="rounded-full bg-linear-to-r from-primary to-accent px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
         >
           Continue Shopping
         </Link>
       </div>
-    );
+    )
   }
 
   return (
@@ -116,68 +134,73 @@ export default function CheckoutPage() {
         {/* Back Link */}
         <Link
           href="/products"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+          className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           Continue Shopping
         </Link>
 
         {/* Progress Steps */}
-        {step !== 'success' && (
+        {step !== "success" && (
           <div className="mb-8">
             <div className="flex items-center justify-center gap-4">
               {[
-                { id: 'shipping', label: 'Shipping', icon: Truck },
-                { id: 'payment', label: 'Payment', icon: CreditCard },
-                { id: 'review', label: 'Review', icon: Package },
+                { id: "shipping", label: "Shipping", icon: Truck },
+                { id: "payment", label: "Payment", icon: CreditCard },
+                { id: "review", label: "Review", icon: Package },
               ].map((s, i) => {
-                const Icon = s.icon;
-                const isActive = step === s.id;
+                const Icon = s.icon
+                const isActive = step === s.id
                 const isCompleted =
-                  (step === 'payment' && s.id === 'shipping') ||
-                  (step === 'review' && (s.id === 'shipping' || s.id === 'payment'));
+                  (step === "payment" && s.id === "shipping") ||
+                  (step === "review" &&
+                    (s.id === "shipping" || s.id === "payment"))
 
                 return (
                   <div key={s.id} className="flex items-center gap-4">
                     <div
                       className={cn(
-                        'flex items-center gap-2 rounded-full px-4 py-2',
-                        isActive && 'bg-primary text-white',
-                        isCompleted && 'bg-green-500 text-white',
-                        !isActive && !isCompleted && 'bg-white text-muted-foreground'
+                        "flex items-center gap-2 rounded-full px-4 py-2",
+                        isActive && "bg-primary text-white",
+                        isCompleted && "bg-green-500 text-white",
+                        !isActive &&
+                          !isCompleted &&
+                          "bg-white text-muted-foreground"
                       )}
                     >
                       <Icon className="h-4 w-4" />
-                      <span className="text-sm font-medium hidden sm:inline">
+                      <span className="hidden text-sm font-medium sm:inline">
                         {s.label}
                       </span>
                     </div>
                     {i < 2 && (
                       <div
                         className={cn(
-                          'h-0.5 w-8',
-                          isCompleted ? 'bg-green-500' : 'bg-border'
+                          "h-0.5 w-8",
+                          isCompleted ? "bg-green-500" : "bg-border"
                         )}
                       />
                     )}
                   </div>
-                );
+                )
               })}
             </div>
           </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             {/* Shipping Form */}
-            {step === 'shipping' && (
+            {step === "shipping" && (
               <div className="rounded-2xl bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-semibold mb-6">Shipping Information</h2>
+                <h2 className="mb-6 text-xl font-semibold">
+                  Shipping Information
+                </h2>
                 <form onSubmit={handleShippingSubmit} className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="mb-1 block text-sm font-medium">
                         Full Name *
                       </label>
                       <input
@@ -185,14 +208,17 @@ export default function CheckoutPage() {
                         type="text"
                         value={shippingInfo.name}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, name: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            name: e.target.value,
+                          })
                         }
                         className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
-                        placeholder="John Doe"
+                        placeholder="Kofi Adu"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="mb-1 block text-sm font-medium">
                         Email *
                       </label>
                       <input
@@ -200,15 +226,18 @@ export default function CheckoutPage() {
                         type="email"
                         value={shippingInfo.email}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, email: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            email: e.target.value,
+                          })
                         }
                         className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
-                        placeholder="john@example.com"
+                        placeholder="kofi@example.com"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="mb-1 block text-sm font-medium">
                       Phone Number *
                     </label>
                     <input
@@ -216,14 +245,17 @@ export default function CheckoutPage() {
                       type="tel"
                       value={shippingInfo.phone}
                       onChange={(e) =>
-                        setShippingInfo({ ...shippingInfo, phone: e.target.value })
+                        setShippingInfo({
+                          ...shippingInfo,
+                          phone: e.target.value,
+                        })
                       }
                       className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="+233 (555) 123-4567"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="mb-1 block text-sm font-medium">
                       Street Address *
                     </label>
                     <input
@@ -231,28 +263,36 @@ export default function CheckoutPage() {
                       type="text"
                       value={shippingInfo.address}
                       onChange={(e) =>
-                        setShippingInfo({ ...shippingInfo, address: e.target.value })
+                        setShippingInfo({
+                          ...shippingInfo,
+                          address: e.target.value,
+                        })
                       }
                       className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
-                      placeholder="123 Main St, Apt 4B"
+                      placeholder="123 Main St, Accra"
                     />
                   </div>
-                  <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-medium mb-1">City *</label>
+                      <label className="mb-1 block text-sm font-medium">
+                        City *
+                      </label>
                       <input
                         required
                         type="text"
                         value={shippingInfo.city}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, city: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            city: e.target.value,
+                          })
                         }
                         className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
-                        placeholder="San Francisco"
+                        placeholder="Accra"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="mb-1 block text-sm font-medium">
                         ZIP Code *
                       </label>
                       <input
@@ -260,16 +300,19 @@ export default function CheckoutPage() {
                         type="text"
                         value={shippingInfo.zip}
                         onChange={(e) =>
-                          setShippingInfo({ ...shippingInfo, zip: e.target.value })
+                          setShippingInfo({
+                            ...shippingInfo,
+                            zip: e.target.value,
+                          })
                         }
                         className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
-                        placeholder="94102"
+                        placeholder="1020"
                       />
                     </div>
                   </div>
                   <button
                     type="submit"
-                    className="w-full rounded-full bg-linear-to-r from-primary to-accent py-3 text-white font-medium hover:opacity-90 transition-opacity"
+                    className="w-full rounded-full bg-linear-to-r from-primary to-accent py-3 font-medium text-white transition-opacity hover:opacity-90"
                   >
                     Continue to Payment
                   </button>
@@ -278,51 +321,55 @@ export default function CheckoutPage() {
             )}
 
             {/* Payment Methods */}
-            {step === 'payment' && (
+            {step === "payment" && (
               <div className="rounded-2xl bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-semibold mb-6">Payment Method</h2>
+                <h2 className="mb-6 text-xl font-semibold">Payment Method</h2>
 
                 {/* Payment Method Tabs */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="mb-6 grid grid-cols-2 gap-3">
                   <button
-                    onClick={() => setPaymentMethod('card')}
+                    onClick={() => setPaymentMethod("card")}
                     className={cn(
-                      'flex items-center gap-3 p-4 rounded-xl border-2 transition-all',
-                      paymentMethod === 'card'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-primary/50'
+                      "flex items-center gap-3 rounded-xl border-2 p-4 transition-all",
+                      paymentMethod === "card"
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
                     )}
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white">
                       <CreditCard className="h-5 w-5 text-primary" />
                     </div>
                     <div className="text-left">
-                      <p className="font-medium text-sm">Card Payment</p>
-                      <p className="text-xs text-muted-foreground">Visa / Mastercard</p>
+                      <p className="text-sm font-medium">Card Payment</p>
+                      <p className="text-xs text-muted-foreground">
+                        Visa / Mastercard
+                      </p>
                     </div>
                   </button>
 
                   <button
-                    onClick={() => setPaymentMethod('momo')}
+                    onClick={() => setPaymentMethod("momo")}
                     className={cn(
-                      'flex items-center gap-3 p-4 rounded-xl border-2 transition-all',
-                      paymentMethod === 'momo'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-primary/50'
+                      "flex items-center gap-3 rounded-xl border-2 p-4 transition-all",
+                      paymentMethod === "momo"
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
                     )}
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white">
                       <Smartphone className="h-5 w-5 text-primary" />
                     </div>
                     <div className="text-left">
-                      <p className="font-medium text-sm">Mobile Money</p>
-                      <p className="text-xs text-muted-foreground">MTN / Telecel / AirtelTigo</p>
+                      <p className="text-sm font-medium">Mobile Money</p>
+                      <p className="text-xs text-muted-foreground">
+                        MTN / Telecel / AirtelTigo
+                      </p>
                     </div>
                   </button>
                 </div>
 
                 {/* Card Payment Form */}
-                {paymentMethod === 'card' && (
+                {paymentMethod === "card" && (
                   <div className="space-y-4">
                     <div className="rounded-xl border border-border p-4">
                       <div className="space-y-3">
@@ -355,50 +402,50 @@ export default function CheckoutPage() {
                 )}
 
                 {/* Mobile Money Form */}
-                {paymentMethod === 'momo' && (
+                {paymentMethod === "momo" && (
                   <div className="space-y-4">
                     {/* Provider Selection */}
                     <div className="grid grid-cols-3 gap-3">
                       <button
-                        onClick={() => setMomoProvider('mtn')}
+                        onClick={() => setMomoProvider("mtn")}
                         className={cn(
-                          'flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all',
-                          momoProvider === 'mtn'
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/50'
+                          "flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition-all",
+                          momoProvider === "mtn"
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
                         )}
                       >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 text-yellow-900 font-bold text-sm">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 text-sm font-bold text-yellow-900">
                           MTN
                         </div>
                         <span className="text-xs font-medium">MOMO</span>
                       </button>
 
                       <button
-                        onClick={() => setMomoProvider('telecel')}
+                        onClick={() => setMomoProvider("telecel")}
                         className={cn(
-                          'flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all',
-                          momoProvider === 'telecel'
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/50'
+                          "flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition-all",
+                          momoProvider === "telecel"
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
                         )}
                       >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white font-bold text-sm">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white">
                           T
                         </div>
                         <span className="text-xs font-medium">Telecel</span>
                       </button>
 
                       <button
-                        onClick={() => setMomoProvider('airteltigo')}
+                        onClick={() => setMomoProvider("airteltigo")}
                         className={cn(
-                          'flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all',
-                          momoProvider === 'airteltigo'
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/50'
+                          "flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition-all",
+                          momoProvider === "airteltigo"
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
                         )}
                       >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white font-bold text-xs">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">
                           A&T
                         </div>
                         <span className="text-xs font-medium">AirtelTigo</span>
@@ -407,7 +454,7 @@ export default function CheckoutPage() {
 
                     {/* Momo Phone Input */}
                     <div className="rounded-xl border border-border p-4">
-                      <label className="block text-sm font-medium mb-2">
+                      <label className="mb-2 block text-sm font-medium">
                         Mobile Money Number
                       </label>
                       <input
@@ -415,24 +462,30 @@ export default function CheckoutPage() {
                         placeholder="0XX XXX XXXX"
                         className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
                       />
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Enter your {momoProvider === 'mtn' ? 'MTN MOMO' : momoProvider === 'telecel' ? 'Telecel Cash' : 'AirtelTigo Money'} number
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Enter your{" "}
+                        {momoProvider === "mtn"
+                          ? "MTN MOMO"
+                          : momoProvider === "telecel"
+                            ? "Telecel Cash"
+                            : "AirtelTigo Money"}{" "}
+                        number
                       </p>
                     </div>
                   </div>
                 )}
 
-                <div className="flex gap-3 mt-6">
+                <div className="mt-6 flex gap-3">
                   <button
-                    onClick={() => setStep('shipping')}
-                    className="flex-1 rounded-full border border-input py-3 font-medium hover:bg-muted transition-colors"
+                    onClick={() => setStep("shipping")}
+                    className="flex-1 rounded-full border border-input py-3 font-medium transition-colors hover:bg-muted"
                   >
                     Back
                   </button>
                   <button
                     onClick={handlePaymentSubmit}
                     disabled={isProcessing}
-                    className="flex-2 rounded-full bg-linear-to-r from-primary to-accent py-3 text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex flex-2 items-center justify-center gap-2 rounded-full bg-linear-to-r from-primary to-accent py-3 font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
                   >
                     {isProcessing ? (
                       <>
@@ -448,47 +501,57 @@ export default function CheckoutPage() {
             )}
 
             {/* Success */}
-            {step === 'success' && (
-              <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="rounded-2xl bg-white p-8 shadow-sm text-center max-w-md w-full mx-auto">
+            {step === "success" && (
+              <div className="flex min-h-[60vh] items-center justify-center">
+                <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-sm">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
                     <Check className="h-10 w-10 text-green-600" />
                   </div>
-                  <h2 className="text-2xl font-bold mb-2">Order Confirmed! 🎉</h2>
-                  <p className="text-muted-foreground mb-6">
-                    Thank you for your order! We&apos;ve sent a confirmation email to{' '}
-                    {shippingInfo.email || 'your email'}.
+                  <h2 className="mb-2 text-2xl font-bold">
+                    Order Confirmed! 🎉
+                  </h2>
+                  <p className="mb-6 text-muted-foreground">
+                    Thank you for your order! We&apos;ve sent a confirmation
+                    email to {shippingInfo.email || "your email"}.
                   </p>
 
                   {/* Copyable Order Number */}
                   <button
-                    onClick={() => navigator.clipboard.writeText(`#GA-${Date.now()}`)}
-                    className="w-full rounded-xl bg-muted p-4 mb-6 text-left group hover:bg-muted/80 transition-colors"
+                    onClick={() =>
+                      navigator.clipboard.writeText(`#GA-${Date.now()}`)
+                    }
+                    className="group mb-6 w-full rounded-xl bg-muted p-4 text-left transition-colors hover:bg-muted/80"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground mb-1">Order Number</p>
-                        <p className="font-mono font-semibold">#GA-{Date.now()}</p>
+                        <p className="mb-1 text-sm text-muted-foreground">
+                          Order Number
+                        </p>
+                        <p className="font-mono font-semibold">
+                          #GA-{Date.now()}
+                        </p>
                       </div>
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-muted-foreground group-hover:text-primary transition-colors">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-muted-foreground transition-colors group-hover:text-primary">
                         <Copy className="h-4 w-4" />
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">Click to copy</p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Click to copy
+                    </p>
                   </button>
 
                   {/* Action Buttons */}
                   <div className="space-y-3">
                     <Link
                       href="/support#tracking"
-                      className="inline-flex items-center justify-center gap-2 w-full rounded-full border-2 border-border px-6 py-3 text-foreground font-medium hover:bg-muted transition-colors"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-border px-6 py-3 font-medium text-foreground transition-colors hover:bg-muted"
                     >
                       <MapPin className="h-5 w-5" />
                       Track Your Order
                     </Link>
                     <Link
                       href="/products"
-                      className="inline-flex items-center justify-center gap-2 w-full rounded-full bg-linear-to-r from-primary to-accent px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-primary to-accent px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
                     >
                       <Sparkles className="h-5 w-5" />
                       Continue Shopping
@@ -501,14 +564,14 @@ export default function CheckoutPage() {
 
           {/* Order Summary */}
           <div className="space-y-6">
-            {step !== 'success' && (
+            {step !== "success" && (
               <>
                 <div className="rounded-2xl bg-white p-6 shadow-sm">
-                  <h3 className="font-semibold mb-4">Order Summary</h3>
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                  <h3 className="mb-4 font-semibold">Order Summary</h3>
+                  <div className="max-h-64 space-y-3 overflow-y-auto">
                     {items.map((item) => (
                       <div key={item.product.id} className="flex gap-3">
-                        <div className="relative h-16 w-16 rounded-lg bg-muted shrink-0 overflow-hidden">
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
                           {item.product.image ? (
                             <Image
                               src={item.product.image}
@@ -519,28 +582,28 @@ export default function CheckoutPage() {
                             />
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-2xl">
-                              {item.product.category === 'Candles' && '🕯️'}
-                              {item.product.category === 'Cards' && '💌'}
-                              {item.product.category === 'Hampers' && '🎁'}
+                              {item.product.category === "Candles" && "🕯️"}
+                              {item.product.category === "Cards" && "💌"}
+                              {item.product.category === "Hampers" && "🎁"}
                             </div>
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm truncate">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">
                             {item.product.name}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             Qty: {item.quantity}
                           </p>
                         </div>
-                        <p className="font-medium text-sm">
+                        <p className="text-sm font-medium">
                           GH₵{(item.product.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
                     ))}
                   </div>
 
-                  <div className="border-t border-border mt-4 pt-4 space-y-2">
+                  <div className="mt-4 space-y-2 border-t border-border pt-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
                       <span>GH₵{subtotal.toFixed(2)}</span>
@@ -553,9 +616,11 @@ export default function CheckoutPage() {
                     )}
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span>{shipping === 0 ? 'Free' : `GH₵${shipping.toFixed(2)}`}</span>
+                      <span>
+                        {shipping === 0 ? "Free" : `GH₵${shipping.toFixed(2)}`}
+                      </span>
                     </div>
-                    <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
+                    <div className="flex justify-between border-t border-border pt-2 text-lg font-semibold">
                       <span>Total</span>
                       <span>GH₵{total.toFixed(2)}</span>
                     </div>
@@ -563,19 +628,25 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Birthday Buddy Upsell */}
-                {!referralStats.hasClaimedReward && <BirthdayBuddyBanner variant="compact" />}
-
-                {referralStats.hasClaimedReward && referralStats.rewardType === 'discount_10' && (
-                  <div className="rounded-xl bg-green-50 border border-green-200 p-4">
-                    <div className="flex items-center gap-2 text-green-700">
-                      <Gift className="h-5 w-5" />
-                      <span className="font-medium">10% Discount Applied!</span>
-                    </div>
-                    <p className="text-sm text-green-600 mt-1">
-                      Your Birthday Buddy Bonus reward has been applied to this order.
-                    </p>
-                  </div>
+                {!referralStats.hasClaimedReward && (
+                  <BirthdayBuddyBanner variant="compact" />
                 )}
+
+                {referralStats.hasClaimedReward &&
+                  referralStats.rewardType === "discount_10" && (
+                    <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+                      <div className="flex items-center gap-2 text-green-700">
+                        <Gift className="h-5 w-5" />
+                        <span className="font-medium">
+                          10% Discount Applied!
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm text-green-600">
+                        Your Birthday Buddy Bonus reward has been applied to
+                        this order.
+                      </p>
+                    </div>
+                  )}
               </>
             )}
           </div>
@@ -584,40 +655,45 @@ export default function CheckoutPage() {
 
       {/* Auth Prompt Modal */}
       {showAuthPrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
           <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
             <button
               onClick={() => setShowAuthPrompt(false)}
-              className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-100"
             >
               <span className="text-gray-500">✕</span>
             </button>
 
-            <div className="text-center space-y-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mx-auto">
+            <div className="space-y-4 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                 <User className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-xl font-bold text-gray-900">
                 Sign in to Complete Your Order
               </h3>
               <p className="text-gray-600">
-                Create an account or sign in to complete your purchase and track your order. This also unlocks our Birthday Buddy Bonus rewards program!
+                Create an account or sign in to complete your purchase and track
+                your order. This also unlocks our Birthday Buddy Bonus rewards
+                program!
               </p>
 
               <div className="grid gap-3 pt-2">
                 <button
                   onClick={handleAuthAndContinue}
-                  className="w-full rounded-full bg-linear-to-r from-primary to-accent py-3 text-white font-medium hover:opacity-90 transition-opacity"
+                  className="w-full rounded-full bg-linear-to-r from-primary to-accent py-3 font-medium text-white transition-opacity hover:opacity-90"
                 >
                   Sign In to Continue
                 </button>
                 <button
                   onClick={() => {
-                    sessionStorage.setItem('checkoutShippingInfo', JSON.stringify(shippingInfo));
-                    sessionStorage.setItem('checkoutStep', 'payment');
-                    openSignUp({ fallbackRedirectUrl: '/checkout' });
+                    sessionStorage.setItem(
+                      "checkoutShippingInfo",
+                      JSON.stringify(shippingInfo)
+                    )
+                    sessionStorage.setItem("checkoutStep", "payment")
+                    openSignUp({ fallbackRedirectUrl: "/checkout" })
                   }}
-                  className="w-full rounded-full border-2 border-gray-200 py-3 text-gray-700 font-medium hover:border-primary hover:text-primary transition-colors"
+                  className="w-full rounded-full border-2 border-gray-200 py-3 font-medium text-gray-700 transition-colors hover:border-primary hover:text-primary"
                 >
                   Create Account
                 </button>
@@ -633,5 +709,5 @@ export default function CheckoutPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

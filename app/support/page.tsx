@@ -1,89 +1,120 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { Search, Mail, Phone, MapPin, Package, ChevronDown, Send, HelpCircle } from 'lucide-react';
-import { faqs } from '@/lib/data';
-import { BirthdayBuddyBanner } from '@/components/birthday-buddy-banner';
-import { cn } from '@/lib/utils';
+import { useState } from "react"
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Package,
+  ChevronDown,
+  Send,
+  HelpCircle,
+} from "lucide-react"
+import { faqs } from "@/lib/data"
+import { BirthdayBuddyBanner } from "@/components/birthday-buddy-banner"
+import { cn } from "@/lib/utils"
 
 export default function SupportPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [trackingNumber, setTrackingNumber] = useState('');
-  const [trackingResult, setTrackingResult] = useState<null | { status: string; location: string }>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0)
+  const [trackingNumber, setTrackingNumber] = useState("")
+  const [trackingResult, setTrackingResult] = useState<null | {
+    status: string
+    location: string
+  }>(null)
   const [contactForm, setContactForm] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
-  const [formSubmitted, setFormSubmitted] = useState(false);
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  })
+  const [formSubmitted, setFormSubmitted] = useState(false)
 
   const handleTrack = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     // Mock tracking result
     if (trackingNumber.trim()) {
       setTrackingResult({
-        status: 'In Transit',
-        location: 'Distribution Center, Los Angeles, CA',
-      });
+        status: "In Transit",
+        location: "Distribution Center, Los Angeles, CA",
+      })
     }
-  };
+  }
 
   const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => setFormSubmitted(false), 3000);
-    setContactForm({ name: '', email: '', subject: '', message: '' });
-  };
+    e.preventDefault()
+    setFormSubmitted(true)
+    setTimeout(() => setFormSubmitted(false), 3000)
+    setContactForm({ name: "", email: "", subject: "", message: "" })
+  }
 
   return (
     <div className="min-h-screen bg-muted/30">
       {/* Hero */}
       <div className="bg-linear-to-r from-primary to-accent py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-4">How Can We Help?</h1>
-          <p className="text-lg opacity-90 max-w-2xl mx-auto">
-            Find answers to common questions, track your order, or get in touch with our support team.
+        <div className="mx-auto max-w-7xl px-4 text-center text-white sm:px-6 lg:px-8">
+          <h1 className="mb-4 text-3xl font-bold sm:text-4xl">
+            How Can We Help?
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg opacity-90">
+            Find answers to common questions, track your order, or get in touch
+            with our support team.
           </p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      <div className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
         {/* Birthday Buddy Banner */}
         <BirthdayBuddyBanner variant="compact" />
 
         {/* Quick Links */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[
-            { icon: HelpCircle, title: 'FAQ', desc: 'Find quick answers', href: '#faq' },
-            { icon: Package, title: 'Track Order', desc: 'Check your delivery', href: '#tracking' },
-            { icon: Mail, title: 'Contact Us', desc: 'Get in touch', href: '#contact' },
+            {
+              icon: HelpCircle,
+              title: "FAQ",
+              desc: "Find quick answers",
+              href: "#faq",
+            },
+            {
+              icon: Package,
+              title: "Track Order",
+              desc: "Check your delivery",
+              href: "#tracking",
+            },
+            {
+              icon: Mail,
+              title: "Contact Us",
+              desc: "Get in touch",
+              href: "#contact",
+            },
           ].map((link) => {
-            const Icon = link.icon;
+            const Icon = link.icon
             return (
               <a
                 key={link.title}
                 href={link.href}
-                className="flex items-center gap-4 rounded-2xl bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="flex items-center gap-4 rounded-2xl bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <Icon className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">{link.title}</h3>
+                  <h3 className="font-semibold text-foreground">
+                    {link.title}
+                  </h3>
                   <p className="text-sm text-muted-foreground">{link.desc}</p>
                 </div>
               </a>
-            );
+            )
           })}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             {/* FAQ Section */}
             <section id="faq" className="rounded-2xl bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+              <h2 className="mb-6 flex items-center gap-2 text-xl font-semibold">
                 <HelpCircle className="h-5 w-5 text-primary" />
                 Frequently Asked Questions
               </h2>
@@ -91,19 +122,21 @@ export default function SupportPage() {
                 {faqs.map((faq, index) => (
                   <div
                     key={index}
-                    className="rounded-xl border border-border overflow-hidden"
+                    className="overflow-hidden rounded-xl border border-border"
                   >
                     <button
-                      onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                      className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/50 transition-colors"
+                      onClick={() =>
+                        setOpenFaq(openFaq === index ? null : index)
+                      }
+                      className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-muted/50"
                     >
-                      <span className="font-medium text-foreground pr-4">
+                      <span className="pr-4 font-medium text-foreground">
                         {faq.question}
                       </span>
                       <ChevronDown
                         className={cn(
-                          'h-5 w-5 text-muted-foreground shrink-0 transition-transform',
-                          openFaq === index && 'rotate-180'
+                          "h-5 w-5 shrink-0 text-muted-foreground transition-transform",
+                          openFaq === index && "rotate-180"
                         )}
                       />
                     </button>
@@ -118,8 +151,11 @@ export default function SupportPage() {
             </section>
 
             {/* Order Tracking */}
-            <section id="tracking" className="rounded-2xl bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+            <section
+              id="tracking"
+              className="rounded-2xl bg-white p-6 shadow-sm"
+            >
+              <h2 className="mb-6 flex items-center gap-2 text-xl font-semibold">
                 <Package className="h-5 w-5 text-primary" />
                 Track Your Order
               </h2>
@@ -134,7 +170,7 @@ export default function SupportPage() {
                   />
                   <button
                     type="submit"
-                    className="rounded-lg bg-linear-to-r from-primary to-accent px-6 py-3 text-white font-medium hover:opacity-90 transition-opacity"
+                    className="rounded-lg bg-linear-to-r from-primary to-accent px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
                   >
                     Track
                   </button>
@@ -143,7 +179,7 @@ export default function SupportPage() {
 
               {trackingResult && (
                 <div className="mt-4 rounded-xl bg-muted p-4">
-                  <div className="flex items-center gap-3 mb-3">
+                  <div className="mb-3 flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
                       <Package className="h-5 w-5 text-primary" />
                     </div>
@@ -154,10 +190,10 @@ export default function SupportPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-muted-foreground/20 overflow-hidden">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted-foreground/20">
                     <div className="h-full w-2/3 rounded-full bg-linear-to-r from-primary to-accent" />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="mt-2 text-xs text-muted-foreground">
                     Estimated delivery: 2-3 business days
                   </p>
                 </div>
@@ -165,8 +201,11 @@ export default function SupportPage() {
             </section>
 
             {/* Contact Form */}
-            <section id="contact" className="rounded-2xl bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+            <section
+              id="contact"
+              className="rounded-2xl bg-white p-6 shadow-sm"
+            >
+              <h2 className="mb-6 flex items-center gap-2 text-xl font-semibold">
                 <Mail className="h-5 w-5 text-primary" />
                 Contact Us
               </h2>
@@ -175,35 +214,47 @@ export default function SupportPage() {
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                     <Send className="h-6 w-6 text-green-600" />
                   </div>
-                  <h3 className="font-semibold text-green-800 mb-1">Message Sent!</h3>
+                  <h3 className="mb-1 font-semibold text-green-800">
+                    Message Sent!
+                  </h3>
                   <p className="text-sm text-green-600">
                     We&apos;ll get back to you within 24 hours.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleContactSubmit} className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Name *</label>
+                      <label className="mb-1 block text-sm font-medium">
+                        Name *
+                      </label>
                       <input
                         required
                         type="text"
                         value={contactForm.name}
                         onChange={(e) =>
-                          setContactForm({ ...contactForm, name: e.target.value })
+                          setContactForm({
+                            ...contactForm,
+                            name: e.target.value,
+                          })
                         }
                         className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
                         placeholder="Your name"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Email *</label>
+                      <label className="mb-1 block text-sm font-medium">
+                        Email *
+                      </label>
                       <input
                         required
                         type="email"
                         value={contactForm.email}
                         onChange={(e) =>
-                          setContactForm({ ...contactForm, email: e.target.value })
+                          setContactForm({
+                            ...contactForm,
+                            email: e.target.value,
+                          })
                         }
                         className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
                         placeholder="your@email.com"
@@ -211,34 +262,44 @@ export default function SupportPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Subject *</label>
+                    <label className="mb-1 block text-sm font-medium">
+                      Subject *
+                    </label>
                     <input
                       required
                       type="text"
                       value={contactForm.subject}
                       onChange={(e) =>
-                        setContactForm({ ...contactForm, subject: e.target.value })
+                        setContactForm({
+                          ...contactForm,
+                          subject: e.target.value,
+                        })
                       }
                       className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
                       placeholder="How can we help?"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Message *</label>
+                    <label className="mb-1 block text-sm font-medium">
+                      Message *
+                    </label>
                     <textarea
                       required
                       rows={4}
                       value={contactForm.message}
                       onChange={(e) =>
-                        setContactForm({ ...contactForm, message: e.target.value })
+                        setContactForm({
+                          ...contactForm,
+                          message: e.target.value,
+                        })
                       }
-                      className="w-full rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                      className="w-full resize-none rounded-lg border border-input px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20"
                       placeholder="Tell us more about your inquiry..."
                     />
                   </div>
                   <button
                     type="submit"
-                    className="w-full rounded-lg bg-linear-to-r from-primary to-accent py-3 text-white font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-primary to-accent py-3 font-medium text-white transition-opacity hover:opacity-90"
                   >
                     <Send className="h-4 w-4" />
                     Send Message
@@ -251,45 +312,48 @@ export default function SupportPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <h3 className="font-semibold mb-4">Contact Info</h3>
+              <h3 className="mb-4 font-semibold">Contact Info</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">Email</p>
+                    <p className="text-sm font-medium">Email</p>
                     <a
                       href="mailto:hello@giftaura.com"
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm text-muted-foreground transition-colors hover:text-primary"
                     >
                       hello@giftaura.com
                     </a>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <Phone className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">Phone</p>
+                    <p className="text-sm font-medium">Phone</p>
                     <a
                       href="tel:+233551234567"
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm text-muted-foreground transition-colors hover:text-primary"
                     >
                       +233 551234567
                     </a>
-                    <p className="text-xs text-muted-foreground">Mon-Fri, 9am-6pm PT</p>
+                    <p className="text-xs text-muted-foreground">
+                      Mon-Fri, 9am-6pm PT
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">Address</p>
+                    <p className="text-sm font-medium">Address</p>
                     <p className="text-sm text-muted-foreground">
-                      123 Gift Lane, Suite 100<br />
+                      123 Gift Lane, Suite 100
+                      <br />
                       San Francisco, CA 94102
                     </p>
                   </div>
@@ -298,13 +362,14 @@ export default function SupportPage() {
             </div>
 
             <div className="rounded-2xl bg-linear-to-r from-primary to-accent p-6 text-white">
-              <h3 className="font-semibold mb-2">Need Urgent Help?</h3>
-              <p className="text-sm opacity-90 mb-4">
-                Our support team is here to help you with any questions or concerns.
+              <h3 className="mb-2 font-semibold">Need Urgent Help?</h3>
+              <p className="mb-4 text-sm opacity-90">
+                Our support team is here to help you with any questions or
+                concerns.
               </p>
               <a
                 href="tel:+233551234567"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-primary hover:bg-white/90 transition-colors"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-white/90"
               >
                 <Phone className="h-4 w-4" />
                 Call Us Now
@@ -314,5 +379,5 @@ export default function SupportPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
