@@ -20,13 +20,12 @@ export function Footer() {
                   className="object-cover"
                 />
               </div>
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-xl font-bold text-transparent">
+              <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-xl font-bold text-transparent">
                 GiftAura
               </span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              Making every gift magical. Premium candles, cards, and hampers for
-              every occasion.
+              Making every gift magical. Creating smiles, one gift at a time.
             </p>
             <div className="flex items-center gap-3">
               <a
@@ -176,7 +175,7 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="mt-0.5 h-4 w-4 text-primary" />
                 <span className="text-sm text-muted-foreground">
-                  +1 (555) 123-4567
+                  +233 (24) 412-3456
                 </span>
               </li>
               <li className="flex items-start gap-3">
