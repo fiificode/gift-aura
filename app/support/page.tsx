@@ -338,10 +338,10 @@ export default function SupportPage() {
                       href="tel:+233551234567"
                       className="text-sm text-muted-foreground transition-colors hover:text-primary"
                     >
-                      +233 551234567
+                      +233 (55) 123-4567
                     </a>
                     <p className="text-xs text-muted-foreground">
-                      Mon-Fri, 9am-6pm PT
+                      Mon-Fri, 9am-6pm GMT
                     </p>
                   </div>
                 </div>
@@ -352,9 +352,9 @@ export default function SupportPage() {
                   <div>
                     <p className="text-sm font-medium">Address</p>
                     <p className="text-sm text-muted-foreground">
-                      123 Gift Lane, Suite 100
+                      UPSA, East Legon, Accra, Ghana
                       <br />
-                      San Francisco, CA 94102
+                      Accra, Ghana
                     </p>
                   </div>
                 </div>
@@ -368,7 +368,7 @@ export default function SupportPage() {
                 concerns.
               </p>
               <a
-                href="tel:+233551234567"
+                href="tel:+233244123456"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-white/90"
               >
                 <Phone className="h-4 w-4" />
